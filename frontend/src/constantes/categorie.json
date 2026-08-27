@@ -1,0 +1,17 @@
+[
+ {
+  "id": 1,
+  "name": "Jardin",
+  "value": "jardin"
+ },
+ {
+  "id": 2,
+  "name": "Musée",
+  "value": "musee"
+ },
+ {
+  "id": 3,
+  "name": "Excursion",
+  "value": "excursion"
+ }
+]
