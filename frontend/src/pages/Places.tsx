@@ -3,11 +3,16 @@ import api from "../services/api";
 import {
   Alert,
   Box,
+  Button,
   Card,
   CardContent,
   Chip,
   CircularProgress,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   MenuItem,
   OutlinedInput,
   Select,
@@ -19,7 +24,9 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
 import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
 import categorie from "../constantes/categorie.json";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { authentificationService } from "../services/authentification";
+import CreationPlace from "./CreationPlace";
 
 const Places = () => {
   type Place = {
@@ -58,10 +65,16 @@ const Places = () => {
 
   const navigate = useNavigate();
 
+  const liste = useParams();
+
+  const [open, setOpen] = useState(false);
+
+  const [nomListe, setNomListe] = useState("");
+
   const getPlaces = async () => {
     try {
       setChargement(true);
-      const res = await api.get("/places");
+      const res = await api.get("/places", { params: { liste: liste.id } });
       setPlaces(res.data);
       setChargement(false);
     } catch (error) {
@@ -131,7 +144,7 @@ const Places = () => {
       <Container maxWidth="xl">
         <Box sx={{ mb: 5 }}>
           <Typography variant="h3" sx={{ fontWeight: 800, mb: 1 }}>
-            Découvrir les places
+            Découvrir les lieux
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Explorez les lieux enregistrés avec leurs détails essentiels.
@@ -223,10 +236,37 @@ const Places = () => {
                 gap: 3,
               }}
             >
+              <Dialog
+                open={open}
+                onClose={() => setOpen(false)}
+                fullWidth
+                maxWidth="sm"
+              >
+                <DialogTitle>Créer un lieu</DialogTitle>
+                <DialogContent>
+                  <CreationPlace liste={liste} />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog
+                open={open}
+                onClose={() => setOpen(false)}
+                fullWidth
+                maxWidth="sm"
+              >
+                <DialogTitle>Créer un lieu</DialogTitle>
+                <DialogContent>
+                  <CreationPlace liste={liste} />
+                </DialogContent>
+              </Dialog>
+
+              <Button onClick={() => setOpen(true)}>
+                Ajouter un lieu à la liste
+              </Button>
               {filteredPlaces.map((place) => (
                 <Card
                   key={place._id}
-                  onClick={() => navigate(`/places/${place._id}`)}
+                  onClick={() => navigate(`/lieux/${place._id}`)}
                   sx={{
                     height: "100%",
                     borderRadius: 5,

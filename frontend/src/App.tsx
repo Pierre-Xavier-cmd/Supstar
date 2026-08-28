@@ -40,7 +40,7 @@ function App() {
           }
         />
         <Route path="/liste-lieux" element={<ListePlaces />} />
-        <Route path="/liste-lieux/:id" element={<ListePlaces />} />
+        <Route path="/liste-lieux/:id" element={<Places />} />
         <Route path="/lieux" element={<Places />} />
         <Route path="/lieux/:id" element={<PlaceDetails />} />
         <Route

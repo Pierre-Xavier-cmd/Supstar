@@ -1,5 +1,5 @@
 const express = require("express");
-const list = require("../models/Place");
+const List = require("../models/List");
 const User = require("../models/User");
 const router = express.Router();
 
@@ -39,6 +39,28 @@ router.post("/", async (req, res) => {
     const listSave = await newList.save();
 
     res.json(listSave);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// créer un lieu
+router.post("/:id/lieu", async (req, res) => {
+  try {
+    const { lieu } = req.body;
+    const list = await List.findById(req.params.id);
+    if (!list) {
+      return res.status(404).json({ message: "lieu non trouvé" });
+    }
+
+    const dejaListe = await list.lieux.some((v) => v.toString() === lieu);
+    if (dejaListe) {
+      return res.status(409).json({ message: "déjà dans la liste" });
+    }
+    list.lieux.push(lieu);
+
+    await list.save();
+    res.json(list);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

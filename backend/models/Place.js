@@ -66,6 +66,12 @@ const PlaceSchema = new mongoose.Schema(
       latitude: Number,
       longitude: Number,
     },
+
+    liste: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "List",
+      required: true,
+    },
   },
   {
     timestamps: true,

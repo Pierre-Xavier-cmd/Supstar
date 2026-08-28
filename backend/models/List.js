@@ -27,6 +27,15 @@ const ListSchema = new mongoose.Schema(
       ],
       default: [],
     },
+    lieux: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Place",
+        },
+      ],
+      default: [],
+    },
   },
   {
     timestamps: true,

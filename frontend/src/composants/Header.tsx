@@ -29,8 +29,8 @@ function Header({ isConnected }: HeaderProps) {
           </Typography>
 
           <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-            <Button color="inherit" component={RouterLink} to="/places">
-              Places
+            <Button color="inherit" component={RouterLink} to="/liste-lieux">
+              Liste des lieux
             </Button>
 
             {isConnected ? (
@@ -38,13 +38,7 @@ function Header({ isConnected }: HeaderProps) {
                 <Button color="inherit" component={RouterLink} to="/mon-profil">
                   Profil
                 </Button>
-                <Button
-                  color="inherit"
-                  component={RouterLink}
-                  to="/creation-place"
-                >
-                  Créer une place
-                </Button>
+
                 <Button
                   variant="outlined"
                   component={RouterLink}

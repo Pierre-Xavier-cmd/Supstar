@@ -15,10 +15,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, type Params } from "react-router-dom";
 import categorie from "../constantes/categorie.json";
+type CreationPlaceProps = {
+  liste: Readonly<string>;
+};
 
-function CreationPlace() {
+function CreationPlace({ liste }: CreationPlaceProps) {
   const [form, setForm] = useState<any>({
     nom: "",
     adresse: "",
@@ -51,9 +54,10 @@ function CreationPlace() {
 
     try {
       setChargement(true);
-      const res = await api.post("/places", form);
+      const res = await api.post("/places", { ...form, liste });
+
       if (res.data.nom) {
-        navigate("/places");
+        navigate(`/liste-lieux/${liste}`);
       }
       setChargement(false);
 
@@ -67,7 +71,7 @@ function CreationPlace() {
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" style={{ padding: 0 }}>
       <Box
         sx={{
           minHeight: "100vh",
@@ -75,18 +79,7 @@ function CreationPlace() {
           alignItems: "center",
         }}
       >
-        <Paper
-          elevation={4}
-          sx={{
-            width: "100%",
-            p: 4,
-            borderRadius: 4,
-          }}
-        >
-          <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
-            Créer une place
-          </Typography>
-
+        <div>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
             Ajoutez un nouveau lieu à votre application.
           </Typography>
@@ -291,7 +284,7 @@ function CreationPlace() {
               )}
             </Button>
           </Box>
-        </Paper>
+        </div>
       </Box>
     </Container>
   );

@@ -1,11 +1,13 @@
 const express = require("express");
 const Place = require("../models/Place");
+const List = require("../models/List");
 const router = express.Router();
 
 // get tous les lieux
 router.get("/", async (req, res) => {
   try {
-    const places = await Place.find();
+    const lieux = { list: req.query.liste };
+    const places = await Place.find(lieux);
     res.json(places);
   } catch (error) {
     res.status(500).json({ message: error.message });
