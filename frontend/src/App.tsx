@@ -11,6 +11,7 @@ import PublicRoute from "./composants/PublicRoute";
 import ProtectedRoute from "./composants/ProtectedRoute";
 import { useEffect, useState } from "react";
 import { authentificationService } from "./services/authentification";
+import ListePlaces from "./pages/ListePlaces";
 
 function App() {
   // const navigate = useNavigate();
@@ -38,8 +39,10 @@ function App() {
             </PublicRoute>
           }
         />
-        <Route path="/places" element={<Places />} />
-        <Route path="/places/:id" element={<PlaceDetails />} />
+        <Route path="/liste-lieux" element={<ListePlaces />} />
+        <Route path="/liste-lieux/:id" element={<ListePlaces />} />
+        <Route path="/lieux" element={<Places />} />
+        <Route path="/lieux/:id" element={<PlaceDetails />} />
         <Route
           path="/mon-profil"
           element={

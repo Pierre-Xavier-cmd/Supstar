@@ -128,7 +128,7 @@ const Places = () => {
         py: 6,
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Box sx={{ mb: 5 }}>
           <Typography variant="h3" sx={{ fontWeight: 800, mb: 1 }}>
             Découvrir les places
