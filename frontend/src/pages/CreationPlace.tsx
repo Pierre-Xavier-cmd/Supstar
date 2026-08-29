@@ -18,7 +18,8 @@ import {
 import { useNavigate, type Params } from "react-router-dom";
 import categorie from "../constantes/categorie.json";
 type CreationPlaceProps = {
-  liste: Readonly<string>;
+  //  liste: Readonly<string>;
+  liste?: string;
 };
 
 function CreationPlace({ liste }: CreationPlaceProps) {
@@ -54,7 +55,12 @@ function CreationPlace({ liste }: CreationPlaceProps) {
 
     try {
       setChargement(true);
-      const res = await api.post("/places", { ...form, liste });
+      //const res = await api.post("/places", { ...form, liste });
+      const res = await api.post("/places", {
+        ...form,
+        ...(liste ? { liste } : {}),
+      });
+      // const res = await api.post("/lieux", { ...form, liste });
 
       if (res.data.nom) {
         navigate(`/liste-lieux/${liste}`);

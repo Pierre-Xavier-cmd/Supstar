@@ -65,16 +65,24 @@ const Places = () => {
 
   const navigate = useNavigate();
 
-  const liste = useParams();
+  //  const liste = useParams();
+  const { id } = useParams();
 
   const [open, setOpen] = useState(false);
 
+  const [openInvitation, setOpenInvitation] = useState(false);
+
   const [nomListe, setNomListe] = useState("");
+
+  const [emailInvitation, setEmailInvitation] = useState("");
+
+  const [roleInvitation, setRoleInvitation] = useState("lecteur");
 
   const getPlaces = async () => {
     try {
       setChargement(true);
-      const res = await api.get("/places", { params: { liste: liste.id } });
+      //      const res = await api.get("/places", { params: { liste: liste.id } });
+      const res = await api.get("/places", { params: { liste: id } });
       setPlaces(res.data);
       setChargement(false);
     } catch (error) {
@@ -92,6 +100,24 @@ const Places = () => {
   //      place.nom.toLowerCase().includes(inputSearch.toLowerCase()) &&
   //      place.categorie?.toLowerCase() === categorieSearch.toLowerCase(),
   //  );
+
+  const handleInvitation = async () => {
+    try {
+      await api.post(`/lists/${id}/partager`, {
+        email: emailInvitation,
+        role: roleInvitation,
+      });
+      setOpenInvitation(false);
+      setEmailInvitation("");
+      setRoleInvitation("lecteur");
+    } catch (error: any) {
+      setErreur(
+        error.response?.data?.message ||
+          error.message ||
+          "Erreur lors de l'invitation",
+      );
+    }
+  };
 
   const filteredPlaces = places.filter((place) => {
     const texte = inputSearch.toLowerCase();
@@ -237,16 +263,43 @@ const Places = () => {
               }}
             >
               <Dialog
-                open={open}
-                onClose={() => setOpen(false)}
+                open={openInvitation}
+                onClose={() => setOpenInvitation(false)}
                 fullWidth
                 maxWidth="sm"
               >
-                <DialogTitle>Créer un lieu</DialogTitle>
+                <DialogTitle>Inviter une personne</DialogTitle>
                 <DialogContent>
-                  <CreationPlace liste={liste} />
+                  <TextField
+                    type="email"
+                    fullWidth
+                    label="Email"
+                    margin="normal"
+                    value={emailInvitation}
+                    onChange={(e) => setEmailInvitation(e.target.value)}
+                  />
+                  <Select
+                    fullWidth
+                    value={roleInvitation}
+                    onChange={(e) => setRoleInvitation(e.target.value)}
+                  >
+                    <MenuItem value="lecteur">Lecteur</MenuItem>
+                    <MenuItem value="commentateur">Commentateur</MenuItem>
+                    <MenuItem value="editeur">Editeur</MenuItem>
+                    <MenuItem value="createur">Créateur</MenuItem>
+                  </Select>
                 </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setOpenInvitation(false)}>
+                    Annuler
+                  </Button>
+                  <Button variant="contained" onClick={handleInvitation}>
+                    Inviter
+                  </Button>
+                </DialogActions>
               </Dialog>
+
+              <Button onClick={() => setOpenInvitation(true)}>Inviter</Button>
 
               <Dialog
                 open={open}
@@ -256,7 +309,8 @@ const Places = () => {
               >
                 <DialogTitle>Créer un lieu</DialogTitle>
                 <DialogContent>
-                  <CreationPlace liste={liste} />
+                  {/* <CreationPlace liste={liste} /> */}
+                  <CreationPlace liste={id ?? ""} />
                 </DialogContent>
               </Dialog>
 

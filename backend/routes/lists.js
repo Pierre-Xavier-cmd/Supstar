@@ -104,11 +104,11 @@ router.put("/:id", async (req, res) => {
 router.post("/:id/partager", async (req, res) => {
   try {
     const { email, role } = req.body;
-    const list = await list.findById(req.params.id);
+    const list = await List.findById(req.params.id);
     if (!list) {
       return res.status(404).json({ message: "liste non trouvé" });
     }
-    const user = await User.findOne([email]);
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "utilisateur non trouvé" });
     }
