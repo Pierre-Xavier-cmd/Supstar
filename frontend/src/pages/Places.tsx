@@ -13,6 +13,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
   MenuItem,
   OutlinedInput,
   Select,
@@ -168,13 +170,81 @@ const Places = () => {
       }}
     >
       <Container maxWidth="xl">
-        <Box sx={{ mb: 5 }}>
-          <Typography variant="h3" sx={{ fontWeight: 800, mb: 1 }}>
-            Découvrir les lieux
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Explorez les lieux enregistrés avec leurs détails essentiels.
-          </Typography>
+        <Box sx={{ mb: 5, display: "flex", justifyContent: "space-between" }}>
+          <div>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                mb: 4,
+              }}
+            >
+              <Typography variant="h3" sx={{ fontWeight: 800, mb: 1 }}>
+                Découvrir les lieux
+              </Typography>
+
+              <Typography variant="body1" color="text.secondary">
+                Explorez les lieux enregistrés avec leurs détails essentiels.
+              </Typography>
+            </Box>
+          </div>
+          <div>
+            <Dialog
+              open={openInvitation}
+              onClose={() => setOpenInvitation(false)}
+              fullWidth
+              maxWidth="sm"
+            >
+              <DialogTitle>Inviter une personne</DialogTitle>
+              <DialogContent>
+                <TextField
+                  type="email"
+                  fullWidth
+                  label="Email"
+                  margin="normal"
+                  value={emailInvitation}
+                  onChange={(e) => setEmailInvitation(e.target.value)}
+                />
+                <Select
+                  fullWidth
+                  value={roleInvitation}
+                  onChange={(e) => setRoleInvitation(e.target.value)}
+                >
+                  <MenuItem value="lecteur">Lecteur</MenuItem>
+                  <MenuItem value="commentateur">Commentateur</MenuItem>
+                  <MenuItem value="editeur">Editeur</MenuItem>
+                  <MenuItem value="createur">Créateur</MenuItem>
+                </Select>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpenInvitation(false)}>
+                  Annuler
+                </Button>
+                <Button variant="contained" onClick={handleInvitation}>
+                  Inviter
+                </Button>
+              </DialogActions>
+            </Dialog>
+
+            <Dialog
+              open={open}
+              onClose={() => setOpen(false)}
+              fullWidth
+              maxWidth="sm"
+            >
+              <DialogTitle>Créer un lieu</DialogTitle>
+              <DialogContent>
+                {/* <CreationPlace liste={liste} /> */}
+                <CreationPlace liste={id ?? ""} />
+              </DialogContent>
+            </Dialog>
+
+            <Button onClick={() => setOpen(true)}>
+              Ajouter un lieu à la liste
+            </Button>
+            <Button onClick={() => setOpenInvitation(true)}>Inviter</Button>
+          </div>
         </Box>
 
         {erreur ? (
@@ -191,7 +261,7 @@ const Places = () => {
                 gridTemplateColumns: {
                   xs: "1fr",
                   md: "1fr 1fr",
-                  lg: "repeat(5, 1fr)",
+                  lg: "repeat(6, 1fr)",
                 },
                 gap: 2,
                 mb: 4,
@@ -234,22 +304,32 @@ const Places = () => {
                 onChange={(e) => setStatutSearch(e.target.value)}
                 placeholder="favoris, visités..."
               />
+              <FormControl fullWidth>
+                <InputLabel id="categorie-label" shrink>
+                  Catégorie
+                </InputLabel>
+
+                <Select
+                  displayEmpty
+                  labelId="categorie-label"
+                  id="categorie-select"
+                  value={categorieSearch}
+                  label="Catégorie"
+                  renderValue={(selected) =>
+                    selected
+                      ? categorie.find((cat) => cat.value === selected)?.name
+                      : "Catégorie"
+                  }
+                  onChange={(e) => setCategorieSearch(e.target.value)}
+                >
+                  {categorie.map((cat) => (
+                    <MenuItem key={cat.value} value={cat.value}>
+                      {cat.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Box>
-            <Select
-              style={{ width: "100px" }}
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={categorieSearch}
-              label="categorie"
-              input={<OutlinedInput label="Categorie" />}
-              onChange={(e) => setCategorieSearch(e.target.value)}
-            >
-              {categorie.map((cat) => (
-                <MenuItem key={cat.value} value={cat.value}>
-                  {cat.name}
-                </MenuItem>
-              ))}
-            </Select>
 
             <Box
               sx={{
@@ -262,61 +342,6 @@ const Places = () => {
                 gap: 3,
               }}
             >
-              <Dialog
-                open={openInvitation}
-                onClose={() => setOpenInvitation(false)}
-                fullWidth
-                maxWidth="sm"
-              >
-                <DialogTitle>Inviter une personne</DialogTitle>
-                <DialogContent>
-                  <TextField
-                    type="email"
-                    fullWidth
-                    label="Email"
-                    margin="normal"
-                    value={emailInvitation}
-                    onChange={(e) => setEmailInvitation(e.target.value)}
-                  />
-                  <Select
-                    fullWidth
-                    value={roleInvitation}
-                    onChange={(e) => setRoleInvitation(e.target.value)}
-                  >
-                    <MenuItem value="lecteur">Lecteur</MenuItem>
-                    <MenuItem value="commentateur">Commentateur</MenuItem>
-                    <MenuItem value="editeur">Editeur</MenuItem>
-                    <MenuItem value="createur">Créateur</MenuItem>
-                  </Select>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setOpenInvitation(false)}>
-                    Annuler
-                  </Button>
-                  <Button variant="contained" onClick={handleInvitation}>
-                    Inviter
-                  </Button>
-                </DialogActions>
-              </Dialog>
-
-              <Button onClick={() => setOpenInvitation(true)}>Inviter</Button>
-
-              <Dialog
-                open={open}
-                onClose={() => setOpen(false)}
-                fullWidth
-                maxWidth="sm"
-              >
-                <DialogTitle>Créer un lieu</DialogTitle>
-                <DialogContent>
-                  {/* <CreationPlace liste={liste} /> */}
-                  <CreationPlace liste={id ?? ""} />
-                </DialogContent>
-              </Dialog>
-
-              <Button onClick={() => setOpen(true)}>
-                Ajouter un lieu à la liste
-              </Button>
               {filteredPlaces.map((place) => (
                 <Card
                   key={place._id}
@@ -360,97 +385,108 @@ const Places = () => {
                   </Box>
 
                   <CardContent sx={{ p: 3 }}>
-                    <Stack spacing={1.5}>
-                      <Box>
+                    <Stack spacing={2}>
+                      <Box sx={{ mb: 100 }}>
                         <Typography variant="h6" sx={{ fontWeight: 800 }}>
                           {place.nom}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {place.description ||
-                            "Aucune description disponible."}
-                        </Typography>
                       </Box>
-
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        <LocationOnOutlinedIcon fontSize="small" />
-                        <Typography variant="body2">
-                          {place.adresse}, {place.ville}, {place.pays}
-                        </Typography>
-                      </Box>
-
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        <StarBorderRoundedIcon fontSize="small" />
-                        <Typography variant="body2">
-                          Note : {place.noteGlobale ?? 0}
-                        </Typography>
-                      </Box>
-
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        <SellOutlinedIcon fontSize="small" />
-                        <Typography variant="body2">
-                          Prix : {place.prix ?? "Non renseigné"}
-                        </Typography>
-                      </Box>
-
-                      <Typography variant="body2">
-                        <strong>Horaires :</strong>{" "}
-                        {place.horaires || "Non renseigné"}
-                      </Typography>
-
-                      <Typography variant="body2">
-                        <strong>Statut :</strong>{" "}
-                        {place.statut || "Non renseigné"}
-                      </Typography>
-
-                      <Typography variant="body2">
-                        <strong>Coordonnées GPS :</strong>{" "}
-                        {place.coordonneesGps
-                          ? `${place.coordonneesGps.latitude ?? "-"}, ${place.coordonneesGps.longitude ?? "-"}`
-                          : "Non renseigné"}
-                      </Typography>
-
-                      <Typography variant="body2">
-                        <strong>Photos :</strong>{" "}
-                        {place.photos.length > 0
-                          ? place.photos.join(", ")
-                          : "Aucune photo"}
-                      </Typography>
 
                       <Box
                         sx={{
                           display: "flex",
-                          flexWrap: "wrap",
+                          flexDirection: "column",
+                          alignItems: "flex-start",
+                          textAlign: "left",
                           gap: 1,
-                          pt: 1,
+                          width: "100%",
                         }}
                       >
-                        {place.tags.length > 0 ? (
-                          place.tags.map((tag, index) => (
+                        <Typography variant="body2" color="text.secondary">
+                          {place.description ||
+                            "Aucune description disponible."}
+                        </Typography>
+
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          sx={{ alignItems: "center" }}
+                        >
+                          <LocationOnOutlinedIcon fontSize="small" />
+                          <Typography variant="body2">
+                            {place.adresse}, {place.ville}, {place.pays}
+                          </Typography>
+                        </Stack>
+
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          sx={{ alignItems: "center" }}
+                        >
+                          <StarBorderRoundedIcon fontSize="small" />
+                          <Typography variant="body2">
+                            Note : {place.noteGlobale ?? 0}
+                          </Typography>
+                        </Stack>
+
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          sx={{ alignItems: "center" }}
+                        >
+                          <SellOutlinedIcon fontSize="small" />
+                          <Typography variant="body2">
+                            Prix : {place.prix ?? "Non renseigné"}
+                          </Typography>
+                        </Stack>
+
+                        <Typography variant="body2">
+                          <strong>Horaires :</strong>{" "}
+                          {place.horaires || "Non renseigné"}
+                        </Typography>
+
+                        <Typography variant="body2">
+                          <strong>Statut :</strong>{" "}
+                          {place.statut || "Non renseigné"}
+                        </Typography>
+
+                        <Typography variant="body2">
+                          <strong>Coordonnées GPS :</strong>{" "}
+                          {place.coordonneesGps
+                            ? `${place.coordonneesGps.latitude ?? "-"}, ${place.coordonneesGps.longitude ?? "-"}`
+                            : "Non renseigné"}
+                        </Typography>
+
+                        <Typography variant="body2">
+                          <strong>Photos :</strong>{" "}
+                          {place.photos.length > 0
+                            ? place.photos.join(", ")
+                            : "Aucune photo"}
+                        </Typography>
+
+                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                          {place.tags.length > 0 ? (
+                            place.tags.map((tag, index) => (
+                              <Chip
+                                key={index}
+                                label={tag}
+                                size="small"
+                                sx={{
+                                  borderRadius: 999,
+                                  bgcolor: "#f3efe8",
+                                  fontWeight: 600,
+                                }}
+                              />
+                            ))
+                          ) : (
                             <Chip
-                              key={index}
-                              label={tag}
+                              label="Aucun tag"
                               size="small"
-                              sx={{
-                                borderRadius: 999,
-                                bgcolor: "#f3efe8",
-                                fontWeight: 600,
-                              }}
+                              variant="outlined"
+                              sx={{ borderRadius: 999 }}
                             />
-                          ))
-                        ) : (
-                          <Chip
-                            label="Aucun tag"
-                            size="small"
-                            variant="outlined"
-                            sx={{ borderRadius: 999 }}
-                          />
-                        )}
+                          )}
+                        </Box>
                       </Box>
                     </Stack>
                   </CardContent>

@@ -32,7 +32,7 @@ function Connexion({ setIsConnected }: ConnexionProps) {
 
   useEffect(() => {
     if (authentificationService.isConnected()) {
-      navigate("/places");
+      navigate("/liste-lieux");
     }
   }, [navigate]);
 
@@ -45,7 +45,7 @@ function Connexion({ setIsConnected }: ConnexionProps) {
       localStorage.setItem("token", res.data.token);
       setIsConnected(true);
       setChargement(false);
-      navigate("/places");
+      navigate("/liste-lieux");
     } catch (error: any) {
       setChargement(false);
       setErreur(error.response?.data?.message);

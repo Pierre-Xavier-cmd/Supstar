@@ -115,10 +115,19 @@ const ListePlaces = () => {
             flexWrap: "wrap",
           }}
         >
-          <Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              textAlign: "left",
+              mb: 4,
+            }}
+          >
             <Typography variant="h3" sx={{ fontWeight: 800, mb: 1 }}>
               Découvrir les listes de lieux
             </Typography>
+
             <Typography variant="body1" color="text.secondary">
               Retrouvez toutes les listes enregistrées.
             </Typography>

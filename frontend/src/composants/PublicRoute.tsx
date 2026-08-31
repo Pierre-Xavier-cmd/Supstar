@@ -7,7 +7,7 @@ type PublicRouteProps = {
 
 function PublicRoute({ children }: PublicRouteProps) {
   if (authentificationService.isConnected()) {
-    return <Navigate to="/places" replace />;
+    return <Navigate to="/liste-lieux" replace />;
   }
 
   return <>{children}</>;

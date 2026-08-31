@@ -6,8 +6,10 @@ import {
   Box,
   Card,
   CardContent,
+  Chip,
   CircularProgress,
   Container,
+  Stack,
   Typography,
 } from "@mui/material";
 
@@ -62,7 +64,7 @@ function PlaceDetails() {
   }, [id]);
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
+    <Container maxWidth="md" sx={{ py: 6 }}>
       {erreur ? (
         <Alert severity="error">{erreur}</Alert>
       ) : chargement ? (
@@ -70,54 +72,182 @@ function PlaceDetails() {
           <CircularProgress />
         </Box>
       ) : data ? (
-        <Card sx={{ borderRadius: 4, p: 2 }}>
-          <CardContent>
-            <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
+        <Card
+          sx={{
+            borderRadius: 6,
+            overflow: "hidden",
+            boxShadow: "0 20px 45px rgba(0,0,0,0.08)",
+            border: "1px solid rgba(0,0,0,0.06)",
+          }}
+        >
+          <Box
+            sx={{
+              background:
+                "linear-gradient(135deg, #c97b63 0%, #f0b48a 55%, #f7d9b8 100%)",
+              px: 4,
+              py: 5,
+            }}
+          >
+            <Typography variant="h3" sx={{ fontWeight: 800, color: "#1f1f1f" }}>
               {data.nom}
             </Typography>
 
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Adresse :</strong> {data.adresse}
+            <Typography variant="body1" sx={{ mt: 1, color: "#3b312c" }}>
+              {data.categorie || "Lieu"} • {data.ville}, {data.pays}
             </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Ville :</strong> {data.ville}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Pays :</strong> {data.pays}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Catégorie :</strong> {data.categorie || "Non renseigné"}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Description :</strong>{" "}
-              {data.description || "Non renseigné"}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Horaires :</strong> {data.horaires || "Non renseigné"}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Prix :</strong> {data.prix ?? "Non renseigné"}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Tags :</strong>{" "}
-              {data.tags.length > 0 ? data.tags.join(", ") : "Aucun"}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Photos :</strong>{" "}
-              {data.photos.length > 0 ? data.photos.join(", ") : "Aucune"}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Note globale :</strong> {data.noteGlobale}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Statut :</strong> {data.statut || "Non renseigné"}
-            </Typography>
-            <Typography variant="body1">
-              <strong>Coordonnées GPS :</strong>{" "}
-              {data.coordonneesGps
-                ? `${data.coordonneesGps.latitude ?? "-"}, ${data.coordonneesGps.longitude ?? "-"}`
-                : "Non renseigné"}
-            </Typography>
+          </Box>
+
+          <CardContent sx={{ p: 4 }}>
+            <Stack spacing={3}>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                  Description
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {data.description || "Non renseigné"}
+                </Typography>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                  gap: 2,
+                }}
+              >
+                <Box
+                  sx={{
+                    p: 2,
+                    borderRadius: 3,
+                    bgcolor: "#faf7f2",
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    Adresse
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {data.adresse}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    p: 2,
+                    borderRadius: 3,
+                    bgcolor: "#faf7f2",
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    Horaires
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {data.horaires || "Non renseigné"}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    p: 2,
+                    borderRadius: 3,
+                    bgcolor: "#faf7f2",
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    Prix
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {data.prix ?? "Non renseigné"}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    p: 2,
+                    borderRadius: 3,
+                    bgcolor: "#faf7f2",
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    Note globale
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {data.noteGlobale}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    p: 2,
+                    borderRadius: 3,
+                    bgcolor: "#faf7f2",
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    Statut
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {data.statut || "Non renseigné"}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    p: 2,
+                    borderRadius: 3,
+                    bgcolor: "#faf7f2",
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    Coordonnées GPS
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {data.coordonneesGps
+                      ? `${data.coordonneesGps.latitude ?? "-"}, ${data.coordonneesGps.longitude ?? "-"}`
+                      : "Non renseigné"}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.5 }}>
+                  Tags
+                </Typography>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 1,
+                    justifyContent: "center",
+                  }}
+                >
+                  {data.tags.length > 0 ? (
+                    data.tags.map((tag: string, index: number) => (
+                      <Chip
+                        key={index}
+                        label={tag}
+                        sx={{
+                          borderRadius: 999,
+                          bgcolor: "#f3efe8",
+                          fontWeight: 600,
+                        }}
+                      />
+                    ))
+                  ) : (
+                    <Chip label="Aucun tag" variant="outlined" />
+                  )}
+                </Box>
+              </Box>
+
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                  Photos
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {data.photos.length > 0 ? data.photos.join(", ") : "Aucune"}
+                </Typography>
+              </Box>
+            </Stack>
           </CardContent>
         </Card>
       ) : null}

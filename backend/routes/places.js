@@ -6,7 +6,7 @@ const router = express.Router();
 // get tous les lieux
 router.get("/", async (req, res) => {
   try {
-    const lieux = { list: req.query.liste };
+    const lieux = { liste: req.query.liste };
     const places = await Place.find(lieux);
     res.json(places);
   } catch (error) {

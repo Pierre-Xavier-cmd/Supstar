@@ -7,16 +7,20 @@ type DecodedToken = {
   prenom: string;
 };
 
-
 export const authentificationService = {
-    logout : () => {
-        localStorage.removeItem("token")
-    },
-    isConnected : () => {
-        return !!localStorage.getItem("token")
-    },
+  logout: () => {
+    localStorage.removeItem("token");
+  },
 
-    getUser(): DecodedToken | null {
+  isConnected: () => {
+    return !!localStorage.getItem("token");
+  },
+
+  getToken: () => {
+    return localStorage.getItem("token");
+  },
+
+  getUser: (): DecodedToken | null => {
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -29,4 +33,4 @@ export const authentificationService = {
       return null;
     }
   },
-}
+};

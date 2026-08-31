@@ -30,7 +30,7 @@ function Inscription() {
 
   useEffect(() => {
     if (authentificationService.isConnected()) {
-      navigate("/places");
+      navigate("/liste-lieux");
     }
   }, [navigate]);
 
@@ -47,6 +47,7 @@ function Inscription() {
       const res = await api.post("/users/inscription", form);
       localStorage.setItem("token", res.data.token);
       setChargement(false);
+      navigate("/liste-lieux");
       // on se redirige avex un navigate ??
 
       alert("Inscription réussie");
