@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import categorie from "../constantes/categorie.json";
 type CreationPlaceProps = {
   liste?: string;
-  onCreated?: () => void | Promise<void>;
+  onCreated?: () => void;
 };
 
 function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
