@@ -5,17 +5,14 @@ const router = express.Router();
 const verifyToken = require("../middleware/auth");
 
 async function peutModifierListe(listeId, userId) {
-  const list = await List.findOne({
-    _id: listeId,
-    $or: [{ createur: userId }, { "membres.user": userId }],
-  });
+  const list = await List.findById(listeId);
 
   if (!list) return false;
 
   const membre = list.membres.find((m) => m.user.toString() === userId);
   return (
     list.createur.toString() === userId ||
-    ["createur", "editeur"].includes(membre?.role)
+    (membre && membre.role === "editeur")
   );
 }
 
