@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Connexion from "./pages/Connexion";
 import Inscription from "./pages/Inscription";
 import CreationPlace from "./pages/CreationPlace";
@@ -31,6 +31,7 @@ function App() {
     <BrowserRouter>
       <Header isConnected={isConnected} />
       <Routes>
+        <Route path="/" element={<Navigate to="/connexion" replace />} />
         <Route
           path="/connexion"
           element={

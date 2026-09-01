@@ -9,20 +9,20 @@ import {
   InputLabel,
   MenuItem,
   OutlinedInput,
-  Paper,
   Select,
   TextareaAutosize,
   TextField,
   Typography,
 } from "@mui/material";
-import { useNavigate, type Params } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import categorie from "../constantes/categorie.json";
 type CreationPlaceProps = {
   //  liste: Readonly<string>;
   liste?: string;
+  onCreated?: () => void | Promise<void>;
 };
 
-function CreationPlace({ liste }: CreationPlaceProps) {
+function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
   const [form, setForm] = useState<any>({
     nom: "",
     adresse: "",
@@ -63,7 +63,11 @@ function CreationPlace({ liste }: CreationPlaceProps) {
       // const res = await api.post("/lieux", { ...form, liste });
 
       if (res.data.nom) {
-        navigate(`/liste-lieux/${liste}`);
+        if (onCreated) {
+          await onCreated();
+        } else {
+          navigate(`/liste-lieux/${liste}`);
+        }
       }
       setChargement(false);
 

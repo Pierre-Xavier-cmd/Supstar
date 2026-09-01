@@ -16,7 +16,6 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  OutlinedInput,
   Select,
   Stack,
   TextField,
@@ -87,8 +86,6 @@ const Places = () => {
   const [open, setOpen] = useState(false);
 
   const [openInvitation, setOpenInvitation] = useState(false);
-
-  const [nomListe, setNomListe] = useState("");
 
   const [emailInvitation, setEmailInvitation] = useState("");
 
@@ -268,7 +265,13 @@ const Places = () => {
                   <DialogTitle>Créer un lieu</DialogTitle>
                   <DialogContent>
                     {/* <CreationPlace liste={liste} /> */}
-                    <CreationPlace liste={id ?? ""} />
+                    <CreationPlace
+                      liste={id ?? ""}
+                      onCreated={async () => {
+                        setOpen(false);
+                        await getPlaces();
+                      }}
+                    />
                   </DialogContent>
                 </Dialog>
               )}
