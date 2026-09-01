@@ -56,7 +56,6 @@ function Inscription({ setIsConnected }: ConnexionProps) {
       // on se redirige avex un navigate ??
 
       alert("Inscription réussie");
-      console.log(res.data);
     } catch (error: any) {
       setChargement(false);
       setErreur(error.response?.data?.message);

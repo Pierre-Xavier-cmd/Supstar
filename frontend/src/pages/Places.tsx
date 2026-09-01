@@ -144,6 +144,7 @@ const Places = () => {
       place.description?.toLowerCase().includes(texte) ||
       place.ville.toLowerCase().includes(texte) ||
       place.pays.toLowerCase().includes(texte) ||
+      place.tags.some((tag) => tag.toLowerCase().includes(texte)) ||
       place.adresse.toLowerCase().includes(texte);
 
     const matchCategorie =

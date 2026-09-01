@@ -207,7 +207,6 @@ function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
               margin="normal"
               value={form.prix}
               onChange={(e) => {
-                console.log(typeof e.target.value);
                 setForm({
                   ...form,
                   prix: Number(e.target.value) < 0 ? 0 : Number(e.target.value),
