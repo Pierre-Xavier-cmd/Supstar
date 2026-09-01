@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api, { messageErreur } from "../services/api";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { authentificationService } from "../services/authentification";
 import {
@@ -24,7 +24,7 @@ function Connexion({ setIsConnected }: ConnexionProps) {
     motDePasse: "",
   });
 
-  const [erreur, setErreur] = useState(null);
+  const [erreur, setErreur] = useState<string | null>(null);
 
   const [chargement, setChargement] = useState(false);
 
@@ -46,9 +46,9 @@ function Connexion({ setIsConnected }: ConnexionProps) {
       setIsConnected(true);
       setChargement(false);
       navigate("/liste-lieux");
-    } catch (error: any) {
+    } catch (error: unknown) {
       setChargement(false);
-      setErreur(error.response?.data?.message);
+      setErreur(messageErreur(error, "Erreur de connexion"));
     }
   };
 

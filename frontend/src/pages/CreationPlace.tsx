@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../services/api";
+import api, { messageErreur } from "../services/api";
 import {
   Alert,
   Box,
@@ -14,7 +14,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useNavigate, type Params } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import categorie from "../constantes/categorie.json";
 type CreationPlaceProps = {
   liste?: string;
@@ -22,26 +22,24 @@ type CreationPlaceProps = {
 };
 
 function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
-  const [form, setForm] = useState<any>({
+  const [form, setForm] = useState({
     nom: "",
     adresse: "",
     ville: "",
     pays: "",
-    tags: [],
+    tags: [] as string[],
     categorie: "",
     description: "",
     horaires: "",
     prix: 0,
     statut: "",
-    photos: [],
+    photos: [] as string[],
     noteGlobale: 0,
     coordonneesGps: {
       latitude: 0,
       longitude: 0,
     },
   });
-
-  //  const [erreur, setErreur] = useState(null);
 
   const [erreur, setErreur] = useState<string | null>(null);
 
@@ -54,25 +52,22 @@ function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
 
     try {
       setChargement(true);
-      //const res = await api.post("/places", { ...form, liste });
       const res = await api.post("/places", {
         ...form,
         ...(liste ? { liste } : {}),
       });
-      // const res = await api.post("/lieux", { ...form, liste });
 
       if (res.data.nom) {
-        navigate(`/liste-lieux/${liste}`);
+        if (onCreated) {
+          await onCreated();
+        } else {
+          navigate(`/liste-lieux/${liste}`);
+        }
       }
       setChargement(false);
-      onCreated?.();
-
-      //      alert("Place créée");
-      //      console.log(res.data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setChargement(false);
-      setErreur(error.response?.data?.message);
-      //      alert(error.response?.data?.message || "Erreur création place");
+      setErreur(messageErreur(error, "Erreur lors de la création du lieu"));
     }
   };
 
@@ -181,11 +176,9 @@ function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
               }
             />
 
-            <input type="file" />
-
             <TextField
               fullWidth
-              label="Photos"
+              label="Liens des photos"
               margin="normal"
               placeholder="https://site.com/photo1.jpg, https://site.com/photo2.jpg"
               value={form.photos.join(", ")}
@@ -206,7 +199,6 @@ function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
               margin="normal"
               value={form.prix}
               onChange={(e) => {
-                console.log(typeof e.target.value);
                 setForm({
                   ...form,
                   prix: Number(e.target.value) < 0 ? 0 : Number(e.target.value),

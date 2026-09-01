@@ -1,17 +1,30 @@
 [
  {
-  "id": 1,
   "name": "Jardin",
   "value": "jardin"
  },
  {
-  "id": 2,
   "name": "Musée",
   "value": "musee"
  },
  {
-  "id": 3,
   "name": "Excursion",
   "value": "excursion"
+ },
+ {
+  "name": "Restaurant",
+  "value": "restaurant"
+ },
+ {
+  "name": "Hôtel",
+  "value": "hotel"
+ },
+ {
+  "name": "Bar",
+  "value": "bar"
+ },
+ {
+  "name": "Activité",
+  "value": "activite"
  }
 ]

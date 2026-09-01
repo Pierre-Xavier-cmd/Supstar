@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api, { messageErreur } from "../services/api";
 import {
   Alert,
   Box,
@@ -68,7 +68,7 @@ const Places = () => {
 
   const [chargement, setChargement] = useState(false);
 
-  const [erreur, setErreur] = useState<any>(false);
+  const [erreur, setErreur] = useState<string | null>(null);
 
   const [inputSearch, setInputSearch] = useState<string>("");
 
@@ -105,9 +105,9 @@ const Places = () => {
       setPlaces(resPlace.data);
       setListes(resListe.data);
       setChargement(false);
-    } catch (error) {
+    } catch (error: unknown) {
       setChargement(false);
-      setErreur(error);
+      setErreur(messageErreur(error, "Erreur lors du chargement des lieux"));
     }
   };
 
@@ -126,12 +126,8 @@ const Places = () => {
       setRoleInvitation("lecteur");
       setSuccess("Invitation envoyée avec succès");
       getPlaces();
-    } catch (error: any) {
-      setErreur(
-        error.response?.data?.message ||
-          error.message ||
-          "Erreur lors de l'invitation",
-      );
+    } catch (error: unknown) {
+      setErreur(messageErreur(error, "Erreur lors de l'invitation"));
     }
   };
 
@@ -144,6 +140,7 @@ const Places = () => {
       place.description?.toLowerCase().includes(texte) ||
       place.ville.toLowerCase().includes(texte) ||
       place.pays.toLowerCase().includes(texte) ||
+      place.tags.some((tag) => tag.toLowerCase().includes(texte)) ||
       place.adresse.toLowerCase().includes(texte);
 
     const matchCategorie =
@@ -172,6 +169,58 @@ const Places = () => {
       matchStatut
     );
   });
+
+  const telecharger = (contenu: string, type: string, extension: string) => {
+    const lien = document.createElement("a");
+    lien.href = `data:${type};charset=utf-8,${encodeURIComponent(contenu)}`;
+    lien.download = `${listes?.nom || "liste-lieux"}.${extension}`;
+    document.body.appendChild(lien);
+    lien.click();
+    lien.remove();
+  };
+
+  const exporterJson = () => {
+    telecharger(
+      JSON.stringify(filteredPlaces, null, 2),
+      "application/json",
+      "json",
+    );
+  };
+
+  const exporterCsv = () => {
+    const ligneCsv = (valeurs: (string | number | undefined)[]) =>
+      valeurs
+        .map((valeur) => `"${String(valeur ?? "").replace(/"/g, '""')}"`)
+        .join(";");
+
+    const lignes = filteredPlaces.map((place) =>
+      ligneCsv([
+        place.nom,
+        place.adresse,
+        place.ville,
+        place.pays,
+        place.categorie,
+        place.noteGlobale,
+        place.prix,
+        place.statut,
+        place.tags.join(", "),
+      ]),
+    );
+
+    const entetes = ligneCsv([
+      "Nom",
+      "Adresse",
+      "Ville",
+      "Pays",
+      "Catégorie",
+      "Note",
+      "Prix",
+      "Statut",
+      "Tags",
+    ]);
+
+    telecharger([entetes, ...lignes].join("\n"), "text/csv", "csv");
+  };
 
   const attributionRole = listes
     ? authentificationService.getRole(listes.membres)
@@ -282,6 +331,8 @@ const Places = () => {
               {peutInviter && (
                 <Button onClick={() => setOpenInvitation(true)}>Inviter</Button>
               )}
+              <Button onClick={exporterJson}>Exporter JSON</Button>
+              <Button onClick={exporterCsv}>Exporter CSV</Button>
             </div>
           </div>
         </Box>
@@ -544,7 +595,7 @@ const Places = () => {
         )}
 
         <Snackbar
-          open={open}
+          open={Boolean(success)}
           autoHideDuration={6000}
           onClose={() => setSuccess("")}
           message={success}

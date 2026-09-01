@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Connexion from "./pages/Connexion";
 import Inscription from "./pages/Inscription";
 import CreationPlace from "./pages/CreationPlace";
@@ -9,28 +9,20 @@ import PlaceDetails from "./pages/PlaceDetails";
 import Deconnexion from "./pages/Deconnexion";
 import PublicRoute from "./composants/PublicRoute";
 import ProtectedRoute from "./composants/ProtectedRoute";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { authentificationService } from "./services/authentification";
 import ListePlaces from "./pages/ListePlaces";
 
 function App() {
-  // const navigate = useNavigate();
-
-  // const deconnexion = () => {
-  //   authentificationService.logout();
-  //   navigate("/places");
-  // };
-
-  const [isConnected, setIsConnected] = useState(false);
-
-  useEffect(() => {
-    setIsConnected(authentificationService.isConnected());
-  }, []);
+  const [isConnected, setIsConnected] = useState(
+    authentificationService.isConnected(),
+  );
 
   return (
     <BrowserRouter>
       <Header isConnected={isConnected} />
       <Routes>
+        <Route path="/" element={<Navigate to="/connexion" />} />
         <Route
           path="/connexion"
           element={

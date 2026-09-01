@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: false,
+      select: false,
     },
 
     preferences: {
@@ -38,10 +39,10 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function () {
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.motDePasse = await bcrypt.hash(this.motDePasse, salt);
-  } catch (error) {}
+  if (!this.isModified("motDePasse")) return;
+
+  const salt = await bcrypt.genSalt(10);
+  this.motDePasse = await bcrypt.hash(this.motDePasse, salt);
 });
 
 userSchema.methods.comparePassword = async function (motDePasse) {

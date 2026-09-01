@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api, { messageErreur } from "../services/api";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { authentificationService } from "../services/authentification";
 import {
@@ -53,14 +53,11 @@ function Inscription({ setIsConnected }: ConnexionProps) {
       setIsConnected(true);
       setChargement(false);
       navigate("/liste-lieux");
-      // on se redirige avex un navigate ??
 
       alert("Inscription réussie");
-      console.log(res.data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setChargement(false);
-      setErreur(error.response?.data?.message);
-      //      alert(error.response?.data?.message || "Erreur d'inscription");
+      setErreur(messageErreur(error, "Erreur lors de l'inscription"));
     }
   };
 

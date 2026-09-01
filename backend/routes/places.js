@@ -2,6 +2,19 @@ const express = require("express");
 const Place = require("../models/Place");
 const List = require("../models/List");
 const router = express.Router();
+const verifyToken = require("../middleware/auth");
+
+async function peutModifierListe(listeId, userId) {
+  const list = await List.findById(listeId);
+
+  if (!list) return false;
+
+  const membre = list.membres.find((m) => m.user.toString() === userId);
+  return (
+    list.createur.toString() === userId ||
+    (membre && membre.role === "editeur")
+  );
+}
 
 // get tous les lieux
 router.get("/", async (req, res) => {
@@ -28,10 +41,18 @@ router.get("/:id", async (req, res) => {
 });
 
 // créer un lieu
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   try {
+    const canEdit = await peutModifierListe(
+      req.body.liste,
+      req.user.userId,
+    );
+
+    if (!canEdit) {
+      return res.status(403).json({ message: "action non autorisée" });
+    }
+
     const nouveauPlace = new Place(req.body);
-    console.log(nouveauPlace);
     const placeSauvegarde = await nouveauPlace.save();
 
     res.json(placeSauvegarde);
@@ -41,12 +62,20 @@ router.post("/", async (req, res) => {
 });
 
 // supprimer un lieu par un id
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyToken, async (req, res) => {
   try {
-    const place = await Place.findByIdAndDelete(req.params.id);
+    const place = await Place.findById(req.params.id);
     if (!place) {
       return res.status(404).json({ message: "lieu non trouvé" });
     }
+
+    const canEdit = await peutModifierListe(place.liste, req.user.userId);
+
+    if (!canEdit) {
+      return res.status(403).json({ message: "action non autorisée" });
+    }
+
+    await Place.findByIdAndDelete(req.params.id);
     res.json({ message: "lieu supprimé avec succès" });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -54,16 +83,32 @@ router.delete("/:id", async (req, res) => {
 });
 
 // modifier un lieu par un id
-router.put("/:id", async (req, res) => {
+router.put("/:id", verifyToken, async (req, res) => {
   try {
-    const place = await Place.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const place = await Place.findById(req.params.id);
     if (!place) {
       return res.status(404).json({ message: "lieu non trouvé" });
     }
-    res.json(place);
+
+    const canEdit = await peutModifierListe(place.liste, req.user.userId);
+
+    if (!canEdit) {
+      return res.status(403).json({ message: "action non autorisée" });
+    }
+
+    const modifications = { ...req.body };
+    delete modifications.liste;
+
+    const placeModifie = await Place.findByIdAndUpdate(
+      req.params.id,
+      modifications,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    res.json(placeModifie);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

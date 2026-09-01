@@ -13,7 +13,7 @@ function Deconnexion({ setIsConnected }: DeconnexionProps): null {
     authentificationService.logout();
     setIsConnected(false);
     navigate("/places");
-  }, [navigate]);
+  }, [navigate, setIsConnected]);
 
   return null;
 }
