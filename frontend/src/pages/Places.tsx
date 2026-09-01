@@ -545,7 +545,7 @@ const Places = () => {
         )}
 
         <Snackbar
-          open={open}
+          open={Boolean(success)}
           autoHideDuration={6000}
           onClose={() => setSuccess("")}
           message={success}
