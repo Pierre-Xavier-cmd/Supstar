@@ -13,7 +13,11 @@ import {
   Typography,
 } from "@mui/material";
 
-function Inscription() {
+type ConnexionProps = {
+  setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+function Inscription({ setIsConnected }: ConnexionProps) {
   const [form, setForm] = useState({
     prenom: "",
     nom: "",
@@ -46,6 +50,7 @@ function Inscription() {
       setChargement(true);
       const res = await api.post("/users/inscription", form);
       localStorage.setItem("token", res.data.token);
+      setIsConnected(true);
       setChargement(false);
       navigate("/liste-lieux");
       // on se redirige avex un navigate ??

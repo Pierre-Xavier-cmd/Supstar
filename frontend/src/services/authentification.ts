@@ -33,4 +33,14 @@ export const authentificationService = {
       return null;
     }
   },
+
+
+    getRole:  (membres:{user:string; role:string }[]) => {
+      
+    const userId = authentificationService.getUser()?.userId;
+
+    return membres.find((membre) => membre.user === userId)?.role;
+
+    
+  },
 };

@@ -50,7 +50,21 @@ const Places = () => {
       longitude?: number;
     };
   };
+
+  type Liste = {
+    _id: string;
+    nom: string;
+    createur?: string;
+    membres: {
+      user: string;
+      role: string;
+    }[];
+    createdAt?: string;
+  };
+
   const [places, setPlaces] = useState<Place[]>([]);
+
+  const [listes, setListes] = useState<Liste | undefined>();
 
   const [chargement, setChargement] = useState(false);
 
@@ -84,8 +98,13 @@ const Places = () => {
     try {
       setChargement(true);
       //      const res = await api.get("/places", { params: { liste: liste.id } });
-      const res = await api.get("/places", { params: { liste: id } });
-      setPlaces(res.data);
+      const [resPlace, resListe] = await Promise.all([
+        api.get("/places", { params: { liste: id } }),
+        api.get(`/lists/${id}`),
+      ]);
+
+      setPlaces(resPlace.data);
+      setListes(resListe.data);
       setChargement(false);
     } catch (error) {
       setChargement(false);
@@ -159,7 +178,16 @@ const Places = () => {
     );
   });
 
-  console.log(filteredPlaces);
+  const attributionRole = listes
+    ? authentificationService.getRole(listes.membres)
+    : undefined;
+
+  const peutAjouterLieu = ["createur", "editeur"].includes(
+    attributionRole ?? "",
+  );
+
+  const peutInviter = attributionRole === "createur";
+
   return (
     <Box
       sx={{
@@ -190,60 +218,70 @@ const Places = () => {
             </Box>
           </div>
           <div>
-            <Dialog
-              open={openInvitation}
-              onClose={() => setOpenInvitation(false)}
-              fullWidth
-              maxWidth="sm"
-            >
-              <DialogTitle>Inviter une personne</DialogTitle>
-              <DialogContent>
-                <TextField
-                  type="email"
+            <div>
+              {peutInviter && (
+                <Dialog
+                  open={openInvitation}
+                  onClose={() => setOpenInvitation(false)}
                   fullWidth
-                  label="Email"
-                  margin="normal"
-                  value={emailInvitation}
-                  onChange={(e) => setEmailInvitation(e.target.value)}
-                />
-                <Select
-                  fullWidth
-                  value={roleInvitation}
-                  onChange={(e) => setRoleInvitation(e.target.value)}
+                  maxWidth="sm"
                 >
-                  <MenuItem value="lecteur">Lecteur</MenuItem>
-                  <MenuItem value="commentateur">Commentateur</MenuItem>
-                  <MenuItem value="editeur">Editeur</MenuItem>
-                  <MenuItem value="createur">Créateur</MenuItem>
-                </Select>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => setOpenInvitation(false)}>
-                  Annuler
-                </Button>
-                <Button variant="contained" onClick={handleInvitation}>
-                  Inviter
-                </Button>
-              </DialogActions>
-            </Dialog>
+                  <DialogTitle>Inviter une personne</DialogTitle>
+                  <DialogContent>
+                    <TextField
+                      type="email"
+                      fullWidth
+                      label="Email"
+                      margin="normal"
+                      value={emailInvitation}
+                      onChange={(e) => setEmailInvitation(e.target.value)}
+                    />
+                    <Select
+                      fullWidth
+                      value={roleInvitation}
+                      onChange={(e) => setRoleInvitation(e.target.value)}
+                    >
+                      <MenuItem value="lecteur">Lecteur</MenuItem>
+                      <MenuItem value="commentateur">Commentateur</MenuItem>
+                      <MenuItem value="editeur">Editeur</MenuItem>
+                      <MenuItem value="createur">Créateur</MenuItem>
+                    </Select>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={() => setOpenInvitation(false)}>
+                      Annuler
+                    </Button>
+                    <Button variant="contained" onClick={handleInvitation}>
+                      Inviter
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              )}
 
-            <Dialog
-              open={open}
-              onClose={() => setOpen(false)}
-              fullWidth
-              maxWidth="sm"
-            >
-              <DialogTitle>Créer un lieu</DialogTitle>
-              <DialogContent>
-                {/* <CreationPlace liste={liste} /> */}
-                <CreationPlace liste={id ?? ""} />
-              </DialogContent>
-            </Dialog>
+              {peutAjouterLieu && (
+                <Dialog
+                  open={open}
+                  onClose={() => setOpen(false)}
+                  fullWidth
+                  maxWidth="sm"
+                >
+                  <DialogTitle>Créer un lieu</DialogTitle>
+                  <DialogContent>
+                    {/* <CreationPlace liste={liste} /> */}
+                    <CreationPlace liste={id ?? ""} />
+                  </DialogContent>
+                </Dialog>
+              )}
 
-            <Button onClick={() => setOpen(true)}>
-              Ajouter un lieu à la liste
-            </Button>
-            <Button onClick={() => setOpenInvitation(true)}>Inviter</Button>
+              {peutAjouterLieu && (
+                <Button onClick={() => setOpen(true)}>
+                  Ajouter un lieu à la liste
+                </Button>
+              )}
+              {peutInviter && (
+                <Button onClick={() => setOpenInvitation(true)}>Inviter</Button>
+              )}
+            </div>
           </div>
         </Box>
 
@@ -342,156 +380,162 @@ const Places = () => {
                 gap: 3,
               }}
             >
-              {filteredPlaces.map((place) => (
-                <Card
-                  key={place._id}
-                  onClick={() => navigate(`/lieux/${place._id}`)}
-                  sx={{
-                    height: "100%",
-                    borderRadius: 5,
-                    overflow: "hidden",
-                    boxShadow: "0 18px 40px rgba(0,0,0,0.08)",
-                    border: "1px solid rgba(0,0,0,0.06)",
-                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                    "&:hover": {
-                      transform: "translateY(-6px)",
-                      boxShadow: "0 24px 50px rgba(0,0,0,0.12)",
-                      cursor: "pointer",
-                    },
-                  }}
-                >
-                  <Box
+              {filteredPlaces.length > 0 ? (
+                filteredPlaces.map((place) => (
+                  <Card
+                    key={place._id}
+                    onClick={() => navigate(`/lieux/${place._id}`)}
                     sx={{
-                      height: 140,
-                      background:
-                        "linear-gradient(135deg, #c97b63 0%, #f0b48a 50%, #f7d9b8 100%)",
-                      display: "flex",
-                      alignItems: "flex-end",
-                      p: 2.5,
+                      height: "100%",
+                      borderRadius: 5,
+                      overflow: "hidden",
+                      boxShadow: "0 18px 40px rgba(0,0,0,0.08)",
+                      border: "1px solid rgba(0,0,0,0.06)",
+                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                      "&:hover": {
+                        transform: "translateY(-6px)",
+                        boxShadow: "0 24px 50px rgba(0,0,0,0.12)",
+                        cursor: "pointer",
+                      },
                     }}
                   >
                     <Box
                       sx={{
-                        bgcolor: "rgba(255,255,255,0.88)",
-                        px: 1.5,
-                        py: 0.75,
-                        borderRadius: 999,
-                        fontSize: 13,
-                        fontWeight: 700,
+                        height: 140,
+                        background:
+                          "linear-gradient(135deg, #c97b63 0%, #f0b48a 50%, #f7d9b8 100%)",
+                        display: "flex",
+                        alignItems: "flex-end",
+                        p: 2.5,
                       }}
                     >
-                      {place.categorie || "Lieu"}
-                    </Box>
-                  </Box>
-
-                  <CardContent sx={{ p: 3 }}>
-                    <Stack spacing={2}>
-                      <Box sx={{ mb: 100 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 800 }}>
-                          {place.nom}
-                        </Typography>
-                      </Box>
-
                       <Box
                         sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "flex-start",
-                          textAlign: "left",
-                          gap: 1,
-                          width: "100%",
+                          bgcolor: "rgba(255,255,255,0.88)",
+                          px: 1.5,
+                          py: 0.75,
+                          borderRadius: 999,
+                          fontSize: 13,
+                          fontWeight: 700,
                         }}
                       >
-                        <Typography variant="body2" color="text.secondary">
-                          {place.description ||
-                            "Aucune description disponible."}
-                        </Typography>
-
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          sx={{ alignItems: "center" }}
-                        >
-                          <LocationOnOutlinedIcon fontSize="small" />
-                          <Typography variant="body2">
-                            {place.adresse}, {place.ville}, {place.pays}
-                          </Typography>
-                        </Stack>
-
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          sx={{ alignItems: "center" }}
-                        >
-                          <StarBorderRoundedIcon fontSize="small" />
-                          <Typography variant="body2">
-                            Note : {place.noteGlobale ?? 0}
-                          </Typography>
-                        </Stack>
-
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          sx={{ alignItems: "center" }}
-                        >
-                          <SellOutlinedIcon fontSize="small" />
-                          <Typography variant="body2">
-                            Prix : {place.prix ?? "Non renseigné"}
-                          </Typography>
-                        </Stack>
-
-                        <Typography variant="body2">
-                          <strong>Horaires :</strong>{" "}
-                          {place.horaires || "Non renseigné"}
-                        </Typography>
-
-                        <Typography variant="body2">
-                          <strong>Statut :</strong>{" "}
-                          {place.statut || "Non renseigné"}
-                        </Typography>
-
-                        <Typography variant="body2">
-                          <strong>Coordonnées GPS :</strong>{" "}
-                          {place.coordonneesGps
-                            ? `${place.coordonneesGps.latitude ?? "-"}, ${place.coordonneesGps.longitude ?? "-"}`
-                            : "Non renseigné"}
-                        </Typography>
-
-                        <Typography variant="body2">
-                          <strong>Photos :</strong>{" "}
-                          {place.photos.length > 0
-                            ? place.photos.join(", ")
-                            : "Aucune photo"}
-                        </Typography>
-
-                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                          {place.tags.length > 0 ? (
-                            place.tags.map((tag, index) => (
-                              <Chip
-                                key={index}
-                                label={tag}
-                                size="small"
-                                sx={{
-                                  borderRadius: 999,
-                                  bgcolor: "#f3efe8",
-                                  fontWeight: 600,
-                                }}
-                              />
-                            ))
-                          ) : (
-                            <Chip
-                              label="Aucun tag"
-                              size="small"
-                              variant="outlined"
-                              sx={{ borderRadius: 999 }}
-                            />
-                          )}
-                        </Box>
+                        {place.categorie || "Lieu"}
                       </Box>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              ))}
+                    </Box>
+
+                    <CardContent sx={{ p: 3 }}>
+                      <Stack spacing={2}>
+                        <Box sx={{ mb: 100 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                            {place.nom}
+                          </Typography>
+                        </Box>
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "flex-start",
+                            textAlign: "left",
+                            gap: 1,
+                            width: "100%",
+                          }}
+                        >
+                          <Typography variant="body2" color="text.secondary">
+                            {place.description ||
+                              "Aucune description disponible."}
+                          </Typography>
+
+                          <Stack
+                            direction="row"
+                            spacing={1}
+                            sx={{ alignItems: "center" }}
+                          >
+                            <LocationOnOutlinedIcon fontSize="small" />
+                            <Typography variant="body2">
+                              {place.adresse}, {place.ville}, {place.pays}
+                            </Typography>
+                          </Stack>
+
+                          <Stack
+                            direction="row"
+                            spacing={1}
+                            sx={{ alignItems: "center" }}
+                          >
+                            <StarBorderRoundedIcon fontSize="small" />
+                            <Typography variant="body2">
+                              Note : {place.noteGlobale ?? 0}
+                            </Typography>
+                          </Stack>
+
+                          <Stack
+                            direction="row"
+                            spacing={1}
+                            sx={{ alignItems: "center" }}
+                          >
+                            <SellOutlinedIcon fontSize="small" />
+                            <Typography variant="body2">
+                              Prix : {place.prix ?? "Non renseigné"}
+                            </Typography>
+                          </Stack>
+
+                          <Typography variant="body2">
+                            <strong>Horaires :</strong>{" "}
+                            {place.horaires || "Non renseigné"}
+                          </Typography>
+
+                          <Typography variant="body2">
+                            <strong>Statut :</strong>{" "}
+                            {place.statut || "Non renseigné"}
+                          </Typography>
+
+                          <Typography variant="body2">
+                            <strong>Coordonnées GPS :</strong>{" "}
+                            {place.coordonneesGps
+                              ? `${place.coordonneesGps.latitude ?? "-"}, ${place.coordonneesGps.longitude ?? "-"}`
+                              : "Non renseigné"}
+                          </Typography>
+
+                          <Typography variant="body2">
+                            <strong>Photos :</strong>{" "}
+                            {place.photos.length > 0
+                              ? place.photos.join(", ")
+                              : "Aucune photo"}
+                          </Typography>
+
+                          <Box
+                            sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}
+                          >
+                            {place.tags.length > 0 ? (
+                              place.tags.map((tag, index) => (
+                                <Chip
+                                  key={index}
+                                  label={tag}
+                                  size="small"
+                                  sx={{
+                                    borderRadius: 999,
+                                    bgcolor: "#f3efe8",
+                                    fontWeight: 600,
+                                  }}
+                                />
+                              ))
+                            ) : (
+                              <Chip
+                                label="Aucun tag"
+                                size="small"
+                                variant="outlined"
+                                sx={{ borderRadius: 999 }}
+                              />
+                            )}
+                          </Box>
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div>Tableau vide </div>
+              )}
             </Box>
           </div>
         )}

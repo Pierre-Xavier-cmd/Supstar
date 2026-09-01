@@ -39,7 +39,14 @@ function App() {
             </PublicRoute>
           }
         />
-        <Route path="/liste-lieux" element={<ListePlaces />} />
+        <Route
+          path="/liste-lieux"
+          element={
+            <ProtectedRoute>
+              <ListePlaces />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/liste-lieux/:id" element={<Places />} />
         <Route path="/lieux/:id" element={<PlaceDetails />} />
         <Route
@@ -54,7 +61,7 @@ function App() {
           path="/inscription"
           element={
             <PublicRoute>
-              <Inscription />
+              <Inscription setIsConnected={setIsConnected} />
             </PublicRoute>
           }
         />

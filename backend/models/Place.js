@@ -60,6 +60,8 @@ const PlaceSchema = new mongoose.Schema(
 
     statut: {
       type: String,
+      enum: ["a_visiter", "visite", "favoris"],
+      default: "a_visiter",
     },
 
     coordonneesGps: {

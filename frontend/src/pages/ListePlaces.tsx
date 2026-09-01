@@ -25,6 +25,7 @@ type Liste = {
   createur?: string;
   membres: {
     user: string;
+    role: string;
   }[];
   createdAt?: string;
 };
@@ -90,6 +91,9 @@ const ListePlaces = () => {
       );
     }
   };
+
+  const attributionRole = (liste: Liste) =>
+    authentificationService.getRole(liste.membres);
 
   const filteredListes = listes.filter((liste) =>
     liste.nom.toLowerCase().includes(inputSearch.toLowerCase()),
@@ -180,73 +184,82 @@ const ListePlaces = () => {
                 gap: 3,
               }}
             >
-              {filteredListes.map((liste) => (
-                <Card
-                  key={liste._id}
-                  onClick={() => navigate(`/liste-lieux/${liste._id}`)}
-                  sx={{
-                    borderRadius: 5,
-                    overflow: "hidden",
-                    boxShadow: "0 18px 40px rgba(0,0,0,0.08)",
-                    border: "1px solid rgba(0,0,0,0.06)",
-                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                    cursor: "pointer",
-                    "&:hover": {
-                      transform: "translateY(-6px)",
-                      boxShadow: "0 24px 50px rgba(0,0,0,0.12)",
-                    },
-                  }}
-                >
-                  <Box
+              {filteredListes.length > 0 ? (
+                filteredListes.map((liste) => (
+                  <Card
+                    key={liste._id}
+                    onClick={() => navigate(`/liste-lieux/${liste._id}`)}
                     sx={{
-                      height: 140,
-                      background:
-                        "linear-gradient(135deg, #c97b63 0%, #f0b48a 50%, #f7d9b8 100%)",
-                      display: "flex",
-                      alignItems: "flex-end",
-                      p: 2.5,
+                      borderRadius: 5,
+                      overflow: "hidden",
+                      boxShadow: "0 18px 40px rgba(0,0,0,0.08)",
+                      border: "1px solid rgba(0,0,0,0.06)",
+                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                      cursor: "pointer",
+                      "&:hover": {
+                        transform: "translateY(-6px)",
+                        boxShadow: "0 24px 50px rgba(0,0,0,0.12)",
+                      },
                     }}
                   >
                     <Box
                       sx={{
-                        bgcolor: "rgba(255,255,255,0.88)",
-                        px: 1.5,
-                        py: 0.75,
-                        borderRadius: 999,
-                        fontSize: 13,
-                        fontWeight: 700,
+                        height: 140,
+                        background:
+                          "linear-gradient(135deg, #c97b63 0%, #f0b48a 50%, #f7d9b8 100%)",
+                        display: "flex",
+                        alignItems: "flex-end",
+                        p: 2.5,
                       }}
                     >
-                      Liste de lieux
+                      <Box
+                        sx={{
+                          bgcolor: "rgba(255,255,255,0.88)",
+                          px: 1.5,
+                          py: 0.75,
+                          borderRadius: 999,
+                          fontSize: 13,
+                          fontWeight: 700,
+                        }}
+                      >
+                        Liste de lieux
+                      </Box>
                     </Box>
-                  </Box>
 
-                  <CardContent sx={{ p: 3 }}>
-                    <Stack spacing={1.5}>
-                      <Typography variant="h6" sx={{ fontWeight: 800 }}>
-                        {liste.nom}
-                      </Typography>
+                    <CardContent sx={{ p: 3 }}>
+                      <Stack spacing={1.5}>
+                        <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                          {liste.nom}
+                        </Typography>
 
-                      <Typography variant="body2">
-                        <strong>Créateur :</strong>{" "}
-                        {liste.createur || "Non renseigné"}
-                      </Typography>
+                        <Typography variant="body2">
+                          <strong>Créateur :</strong>{" "}
+                          {liste.createur || "Non renseigné"}
+                        </Typography>
 
-                      <Typography variant="body2">
-                        <strong>Nombre de membres :</strong>{" "}
-                        {liste.membres?.length || 0}
-                      </Typography>
+                        <Typography variant="body2">
+                          <strong>Nombre de membres :</strong>{" "}
+                          {liste.membres?.length || 0}
+                        </Typography>
 
-                      <Typography variant="body2">
-                        <strong>Créée le :</strong>{" "}
-                        {liste.createdAt
-                          ? new Date(liste.createdAt).toLocaleDateString()
-                          : "Non renseigné"}
-                      </Typography>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              ))}
+                        <Typography variant="body2">
+                          <strong>Créée le :</strong>{" "}
+                          {liste.createdAt
+                            ? new Date(liste.createdAt).toLocaleDateString()
+                            : "Non renseigné"}
+                        </Typography>
+
+                        <Typography variant="body2">
+                          <strong>Role du membre :</strong>{" "}
+                          {attributionRole(liste)}
+                        </Typography>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div>Tableau vide</div>
+              )}
             </Box>
           </>
         )}
