@@ -258,7 +258,9 @@ const ListePlaces = () => {
                   </Card>
                 ))
               ) : (
-                <div>Tableau vide</div>
+                <div>
+                  <h2>Aucune liste de lieux n'a été trouvée</h2>
+                </div>
               )}
             </Box>
           </>

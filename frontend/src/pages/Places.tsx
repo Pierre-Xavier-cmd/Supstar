@@ -17,6 +17,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
   Stack,
   TextField,
   Typography,
@@ -80,7 +81,6 @@ const Places = () => {
 
   const navigate = useNavigate();
 
-  //  const liste = useParams();
   const { id } = useParams();
 
   const [open, setOpen] = useState(false);
@@ -91,10 +91,12 @@ const Places = () => {
 
   const [roleInvitation, setRoleInvitation] = useState("lecteur");
 
+  const [success, setSuccess] = useState("");
+
   const getPlaces = async () => {
     try {
       setChargement(true);
-      //      const res = await api.get("/places", { params: { liste: liste.id } });
+
       const [resPlace, resListe] = await Promise.all([
         api.get("/places", { params: { liste: id } }),
         api.get(`/lists/${id}`),
@@ -113,12 +115,6 @@ const Places = () => {
     getPlaces();
   }, []);
 
-  //  const filteredPlaces = places.filter(
-  //    (place) =>
-  //      place.nom.toLowerCase().includes(inputSearch.toLowerCase()) &&
-  //      place.categorie?.toLowerCase() === categorieSearch.toLowerCase(),
-  //  );
-
   const handleInvitation = async () => {
     try {
       await api.post(`/lists/${id}/partager`, {
@@ -128,6 +124,8 @@ const Places = () => {
       setOpenInvitation(false);
       setEmailInvitation("");
       setRoleInvitation("lecteur");
+      setSuccess("Invitation envoyée avec succès");
+      getPlaces();
     } catch (error: any) {
       setErreur(
         error.response?.data?.message ||
@@ -266,11 +264,12 @@ const Places = () => {
                   <DialogContent>
                     {/* <CreationPlace liste={liste} /> */}
                     <CreationPlace
-                      liste={id ?? ""}
-                      onCreated={async () => {
+                      onCreated={() => {
                         setOpen(false);
-                        await getPlaces();
+                        setSuccess("Le lieu a été créé avec succès");
+                        getPlaces();
                       }}
+                      liste={id ?? ""}
                     />
                   </DialogContent>
                 </Dialog>
@@ -537,11 +536,20 @@ const Places = () => {
                   </Card>
                 ))
               ) : (
-                <div>Tableau vide </div>
+                <div>
+                  <h2>Auncun lieu n'a été trouvé</h2>
+                </div>
               )}
             </Box>
           </div>
         )}
+
+        <Snackbar
+          open={open}
+          autoHideDuration={6000}
+          onClose={() => setSuccess("")}
+          message={success}
+        />
       </Container>
     </Box>
   );

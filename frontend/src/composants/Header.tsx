@@ -24,73 +24,64 @@ function Header({ isConnected }: HeaderProps) {
       <Container maxWidth="xl">
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            Mes lieux
+            Supstar
           </Typography>
-
-          {/*           <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-            <Button color="inherit" component={RouterLink} to="/liste-lieux">
-              Liste des lieux
-            </Button> */}
-
-          {isConnected && (
-            <Button component={RouterLink} to="/liste-lieux" color="inherit">
-              Mes listes
-            </Button>
-          )}
-
-          {isConnected ? (
-            <>
-              <Button color="inherit" component={RouterLink} to="/mon-profil">
-                Profil
+          <div>
+            {isConnected && (
+              <Button component={RouterLink} to="/liste-lieux" color="inherit">
+                Mes listes
               </Button>
+            )}
 
-              <Button
-                variant="outlined"
-                component={RouterLink}
-                to="/deconnexion"
-                sx={{
-                  color: "#fff",
-                  borderColor: "rgba(255,255,255,0.5)",
-                  "&:hover": {
-                    borderColor: "#fff",
-                    backgroundColor: "rgba(255,255,255,0.08)",
-                  },
-                }}
-              >
-                Déconnexion
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button color="inherit" component={RouterLink} to="/connexion">
-                Connexion
-              </Button>
-              <Button
-                variant="contained"
-                component={RouterLink}
-                to="/inscription"
-                sx={{
-                  backgroundColor: "#fff",
-                  color: "#1e3a8a",
-                  fontWeight: 600,
-                  "&:hover": {
-                    backgroundColor: "#e5e7eb",
-                  },
-                }}
-              >
-                Inscription
-              </Button>
-            </>
-          )}
+            {isConnected ? (
+              <>
+                <Button color="inherit" component={RouterLink} to="/mon-profil">
+                  Profil
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  component={RouterLink}
+                  to="/deconnexion"
+                  sx={{
+                    color: "#fff",
+                    borderColor: "rgba(255,255,255,0.5)",
+                    "&:hover": {
+                      borderColor: "#fff",
+                      backgroundColor: "rgba(255,255,255,0.08)",
+                    },
+                  }}
+                >
+                  Déconnexion
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button color="inherit" component={RouterLink} to="/connexion">
+                  Connexion
+                </Button>
+                <Button
+                  variant="contained"
+                  component={RouterLink}
+                  to="/inscription"
+                  sx={{
+                    backgroundColor: "#fff",
+                    color: "#1e3a8a",
+                    fontWeight: 600,
+                    "&:hover": {
+                      backgroundColor: "#e5e7eb",
+                    },
+                  }}
+                >
+                  Inscription
+                </Button>
+              </>
+            )}
+          </div>
         </Toolbar>
       </Container>
     </AppBar>
   );
 }
-//        <Link to="/connexion">Connexion</Link> |{" "}
-//        <Link to="/places">Places</Link> | <Link to="/mon-profil">Profil</Link>{" "}
-//        | <Link to="/inscription">Inscription</Link> |{" "}
-//        <Link to="/creation-place">Créer une place</Link> |{" "}
-//        <Link to="/deconnexion">Deconnexion</Link>
 
 export default Header;
