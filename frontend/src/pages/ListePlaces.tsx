@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api, { getErrorMessage } from "../services/api";
+import api, { messageErreur } from "../services/api";
 import {
   Alert,
   Box,
@@ -53,7 +53,7 @@ const ListePlaces = () => {
       setChargement(false);
     } catch (error: unknown) {
       setChargement(false);
-      setErreur(getErrorMessage(error, "Erreur lors du chargement des listes"));
+      setErreur(messageErreur(error, "Erreur lors du chargement des listes"));
     }
   };
 
@@ -84,7 +84,7 @@ const ListePlaces = () => {
       setErreur(null);
       getListes();
     } catch (error: unknown) {
-      setErreur(getErrorMessage(error, "Erreur création liste"));
+      setErreur(messageErreur(error, "Erreur création liste"));
     }
   };
 

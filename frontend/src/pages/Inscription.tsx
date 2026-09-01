@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api, { getErrorMessage } from "../services/api";
+import api, { messageErreur } from "../services/api";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { authentificationService } from "../services/authentification";
 import {
@@ -57,7 +57,7 @@ function Inscription({ setIsConnected }: ConnexionProps) {
       alert("Inscription réussie");
     } catch (error: unknown) {
       setChargement(false);
-      setErreur(getErrorMessage(error, "Erreur lors de l'inscription"));
+      setErreur(messageErreur(error, "Erreur lors de l'inscription"));
     }
   };
 

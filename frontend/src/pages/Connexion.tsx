@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api, { getErrorMessage } from "../services/api";
+import api, { messageErreur } from "../services/api";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { authentificationService } from "../services/authentification";
 import {
@@ -48,7 +48,7 @@ function Connexion({ setIsConnected }: ConnexionProps) {
       navigate("/liste-lieux");
     } catch (error: unknown) {
       setChargement(false);
-      setErreur(getErrorMessage(error, "Erreur de connexion"));
+      setErreur(messageErreur(error, "Erreur de connexion"));
     }
   };
 

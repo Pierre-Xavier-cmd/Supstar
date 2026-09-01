@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import api, { getErrorMessage } from "../services/api";
+import api, { messageErreur } from "../services/api";
 import { authentificationService } from "../services/authentification";
 import {
   Alert,
@@ -101,7 +101,7 @@ function PlaceDetails() {
         }
       }
     } catch (error: unknown) {
-      setErreur(getErrorMessage(error, "Erreur lors du chargement du lieu"));
+      setErreur(messageErreur(error, "Erreur lors du chargement du lieu"));
     } finally {
       setChargement(false);
     }
@@ -120,7 +120,7 @@ function PlaceDetails() {
       setAvis(res.data);
     } catch (error: unknown) {
       setErreurAvis(
-        getErrorMessage(error, "Erreur lors du chargement des avis"),
+        messageErreur(error, "Erreur lors du chargement des avis"),
       );
     } finally {
       setChargementAvis(false);
@@ -174,7 +174,7 @@ function PlaceDetails() {
       await Promise.all([getPlaceById(), getAvis()]);
     } catch (error: unknown) {
       setErreurAvis(
-        getErrorMessage(error, "Erreur lors de l'envoi de votre avis"),
+        messageErreur(error, "Erreur lors de l'envoi de votre avis"),
       );
     } finally {
       setEnvoiAvis(false);

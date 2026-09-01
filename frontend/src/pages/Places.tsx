@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api, { getErrorMessage } from "../services/api";
+import api, { messageErreur } from "../services/api";
 import {
   Alert,
   Box,
@@ -107,7 +107,7 @@ const Places = () => {
       setChargement(false);
     } catch (error: unknown) {
       setChargement(false);
-      setErreur(getErrorMessage(error, "Erreur lors du chargement des lieux"));
+      setErreur(messageErreur(error, "Erreur lors du chargement des lieux"));
     }
   };
 
@@ -127,7 +127,7 @@ const Places = () => {
       setSuccess("Invitation envoyée avec succès");
       getPlaces();
     } catch (error: unknown) {
-      setErreur(getErrorMessage(error, "Erreur lors de l'invitation"));
+      setErreur(messageErreur(error, "Erreur lors de l'invitation"));
     }
   };
 

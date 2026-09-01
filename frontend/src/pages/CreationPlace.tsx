@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api, { getErrorMessage } from "../services/api";
+import api, { messageErreur } from "../services/api";
 import {
   Alert,
   Box,
@@ -67,7 +67,7 @@ function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
       setChargement(false);
     } catch (error: unknown) {
       setChargement(false);
-      setErreur(getErrorMessage(error, "Erreur lors de la création du lieu"));
+      setErreur(messageErreur(error, "Erreur lors de la création du lieu"));
     }
   };
 

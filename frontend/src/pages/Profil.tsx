@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { authentificationService } from "../services/authentification";
-import { getErrorMessage } from "../services/api";
+import { messageErreur } from "../services/api";
 import {
   Alert,
   Box,
@@ -46,7 +46,7 @@ function Profil() {
       setChargement(false);
     } catch (error: unknown) {
       setChargement(false);
-      setErreur(getErrorMessage(error, "Token invalide"));
+      setErreur(messageErreur(error, "Token invalide"));
     }
   }, [navigate]);
 
