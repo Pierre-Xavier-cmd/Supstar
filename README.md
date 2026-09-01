@@ -4,8 +4,16 @@ Application web de gestion et de partage de lieux.
 
 ## Lancer le projet
 
+Créer un fichier `.env` à la racine du projet :
+
+```env
+JWT_SECRET=une_cle_secrete
+```
+
+Puis lancer :
+
 ```bash
-JWT_SECRET=une_cle docker compose up --build
+docker compose up --build
 ```
 
 Le site est ensuite disponible sur `http://localhost:5173`.
