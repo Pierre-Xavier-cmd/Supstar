@@ -1,80 +1,92 @@
-# Documentation technique
+# Documentation technique Supstar
 
-## Technologies
+## Présentation
 
-- frontend : React, TypeScript, Vite et Material UI
-- backend : Node.js et Express
-- base de données : MongoDB avec Mongoose
-- connexion : JWT et bcrypt
+Supstar est une application web de gestion de lieux et de listes de lieux. Elle permet à un utilisateur de créer un compte, de se connecter, de créer des lieux, de créer des listes, d'ajouter des lieux dans une liste et de partager une liste avec d'autres utilisateurs.
 
-## Lancer le projet
+## Stack technique
+
+Le frontend de l'application est développé avec React et TypeScript. La navigation est gérée avec React Router. L'interface utilise Material UI pour les composants visuels et Axios pour les appels HTTP vers l'API.
+
+Le backend repose sur Node.js et Express. Les données sont stockées dans MongoDB et manipulées avec Mongoose. L'authentification utilise des tokens JWT et les mots de passe sont hachés avec bcrypt.
+
+## Architecture
+
+L'application est séparée en trois parties : le frontend, l'API backend et la base de données MongoDB.
+
+Côté frontend, `App.tsx` centralise les routes de l'application et `Header.tsx` gère la navigation principale. `Connexion.tsx` correspond à la page de connexion, `Inscription.tsx` à la page d'inscription, `Places.tsx` à l'affichage des lieux, `CreationPlace.tsx` au formulaire de création d'un lieu, `ListePlaces.tsx` à l'affichage des listes, `PlaceDetails.tsx` au détail d'un lieu et `Profil.tsx` à la page du profil utilisateur.
+
+Côté backend, les modèles se trouvent dans `backend/models` et les routes de l'API dans `backend/routes`. Le fichier `backend/middleware/auth.js` vérifie les tokens des routes protégées.
+
+## Modèles de données
+
+Le modèle `User` contient les champs `prenom`, `nom`, `email`, `motDePasse` et `preferences`.
+
+Le modèle `Place` contient les champs `nom`, `adresse`, `ville`, `pays`, `categorie`, `description`, `horaires`, `prix`, `tags`, `photos`, `noteGlobale`, `statut`, `coordonneesGps` et `liste`. Chaque lieu est rattaché à une liste.
+
+Le modèle `List` contient les champs `nom`, `createur`, `membres` et `lieux`. Un membre possède le rôle `createur`, `editeur`, `commentateur` ou `lecteur`.
+
+Le modèle `Avis` contient un lieu, un auteur, une note et un commentaire. Un utilisateur ne peut avoir qu'un seul avis par lieu.
+
+## Authentification et droits
+
+Après une inscription ou une connexion, le backend génère un token JWT et le renvoie au frontend. Ce token est stocké dans `localStorage` et envoyé dans l'en-tête `Authorization` pour les appels protégés.
+
+Les routes des utilisateurs et des listes sont protégées. Pour créer, modifier ou supprimer un lieu, l'utilisateur doit être le créateur ou un éditeur de la liste. Seul le créateur peut inviter de nouveaux membres.
+
+## Routes principales
+
+Les routes principales du frontend sont `/connexion`, `/inscription`, `/liste-lieux`, `/liste-lieux/:id`, `/lieux/:id`, `/creation-place`, `/mon-profil` et `/deconnexion`.
+
+Les principales routes de l'API sont :
+
+```text
+POST   /api/users/inscription
+POST   /api/users/connexion
+GET    /api/users
+GET    /api/users/:id
+PUT    /api/users/:id
+DELETE /api/users/:id
+
+GET    /api/lists
+POST   /api/lists
+GET    /api/lists/:id
+PUT    /api/lists/:id
+DELETE /api/lists/:id
+POST   /api/lists/:id/partager
+POST   /api/lists/:id/lieu
+
+GET    /api/places?liste=id
+POST   /api/places
+GET    /api/places/:id
+PUT    /api/places/:id
+DELETE /api/places/:id
+
+GET    /api/avis/:lieuId
+POST   /api/avis/:lieuId
+DELETE /api/avis/:lieuId
+```
+
+## Fonctionnalités
+
+L'application permet de créer et partager des listes, d'ajouter des lieux, d'afficher des photos à partir de leurs liens, de rechercher et filtrer les lieux et de publier des avis.
+
+Les lieux affichés peuvent être exportés au format JSON ou CSV. Lorsqu'un lieu possède une latitude et une longitude, sa fiche affiche une carte OpenStreetMap centrée sur ses coordonnées.
+
+## Conteneurisation
+
+Le fichier `docker-compose.yml` démarre trois conteneurs : MongoDB, le backend et le frontend. Les deux Dockerfiles se trouvent dans `backend` et `frontend`.
+
+Pour lancer le projet :
 
 ```bash
-git clone https://github.com/Pierre-Xavier-cmd/Supstar.git
-cd Supstar
 JWT_SECRET=une_cle_a_modifier docker compose up --build
 ```
 
-Ouvrir `http://localhost:5173`.
+Le frontend est disponible sur `http://localhost:5173` et l'API sur `http://localhost:5000`.
 
-Pour arrêter :
+Pour arrêter les conteneurs :
 
 ```bash
 docker compose down
 ```
-
-## Organisation
-
-- `frontend/src/pages` : pages du site
-- `frontend/src/composants` : composants React
-- `frontend/src/services` : appels API et connexion
-- `backend/models` : modèles MongoDB
-- `backend/routes` : routes de l'API
-- `backend/middleware/auth.js` : vérification du token
-
-## Routes API
-
-Utilisateurs :
-
-```text
-POST /users/inscription
-POST /users/connexion
-GET  /users
-GET  /users/:id
-PUT  /users/:id
-DELETE /users/:id
-```
-
-Listes :
-
-```text
-GET  /lists
-POST /lists
-GET  /lists/:id
-PUT  /lists/:id
-DELETE /lists/:id
-POST /lists/:id/partager
-POST /lists/:id/lieu
-```
-
-Lieux :
-
-```text
-GET  /places?liste=id
-POST /places
-GET  /places/:id
-PUT  /places/:id
-DELETE /places/:id
-```
-
-Avis :
-
-```text
-GET  /avis/:lieuId
-POST /avis/:lieuId
-DELETE /avis/:lieuId
-```
-
-Les rôles d'une liste sont `createur`, `editeur`, `commentateur` et `lecteur`.
-
-Le frontend permet d'exporter les lieux affichés en JSON ou CSV. La fiche d'un lieu affiche une carte OpenStreetMap lorsque ses coordonnées GPS sont renseignées.
