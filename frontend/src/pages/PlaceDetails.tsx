@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../services/api";
+import api, { getErrorMessage } from "../services/api";
 import { authentificationService } from "../services/authentification";
 import {
   Alert,
@@ -100,12 +100,8 @@ function PlaceDetails() {
           setChargementListe(false);
         }
       }
-    } catch (error: any) {
-      setErreur(
-        error.response?.data?.message ||
-          error.message ||
-          "Erreur lors du chargement de la place",
-      );
+    } catch (error: unknown) {
+      setErreur(getErrorMessage(error, "Erreur lors du chargement du lieu"));
     } finally {
       setChargement(false);
     }
@@ -122,9 +118,9 @@ function PlaceDetails() {
 
       const res = await api.get(`/avis/${id}`);
       setAvis(res.data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setErreurAvis(
-        error.response?.data?.message || "Erreur lors du chargement des avis",
+        getErrorMessage(error, "Erreur lors du chargement des avis"),
       );
     } finally {
       setChargementAvis(false);
@@ -143,6 +139,13 @@ function PlaceDetails() {
   const peutCommenter = ["createur", "editeur", "commentateur"].includes(
     attributionRole ?? "",
   );
+
+  const latitude = data?.coordonneesGps?.latitude;
+  const longitude = data?.coordonneesGps?.longitude;
+  const carteUrl =
+    latitude !== undefined && longitude !== undefined
+      ? `https://www.openstreetmap.org/export/embed.html?bbox=${longitude - 0.01}%2C${latitude - 0.01}%2C${longitude + 0.01}%2C${latitude + 0.01}&layer=mapnik&marker=${latitude}%2C${longitude}`
+      : null;
 
   const handleSubmitAvis = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -169,9 +172,9 @@ function PlaceDetails() {
       setNote(null);
 
       await Promise.all([getPlaceById(), getAvis()]);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setErreurAvis(
-        error.response?.data?.message || "Erreur lors de l'envoi de votre avis",
+        getErrorMessage(error, "Erreur lors de l'envoi de votre avis"),
       );
     } finally {
       setEnvoiAvis(false);
@@ -382,6 +385,27 @@ function PlaceDetails() {
                     </Typography>
                   )}
                 </Box>
+
+                {carteUrl && (
+                  <Box>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                      Carte
+                    </Typography>
+
+                    <Box
+                      component="iframe"
+                      title={`Carte de ${data.nom}`}
+                      src={carteUrl}
+                      loading="lazy"
+                      sx={{
+                        width: "100%",
+                        height: 300,
+                        border: 0,
+                        borderRadius: 2,
+                      }}
+                    />
+                  </Box>
+                )}
               </Stack>
             </CardContent>
           </Card>

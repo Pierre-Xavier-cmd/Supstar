@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { authentificationService } from "../services/authentification";
+import { getErrorMessage } from "../services/api";
 import {
   Alert,
   Box,
@@ -27,7 +28,7 @@ function Profil() {
   const navigate = useNavigate();
   const [user, setUser] = useState<DecodedToken | null>(null);
 
-  const [erreur, setErreur] = useState(null);
+  const [erreur, setErreur] = useState<string | null>(null);
 
   const [chargement, setChargement] = useState(false);
 
@@ -43,11 +44,9 @@ function Profil() {
       const decoded = jwtDecode<DecodedToken>(token);
       setUser(decoded);
       setChargement(false);
-    } catch (error: any) {
-      //      console.error("Token invalide :", error);
-      //      navigate("/connexion");
-      // Qu'est ce qu'on fait ici ?
-      setErreur(error);
+    } catch (error: unknown) {
+      setChargement(false);
+      setErreur(getErrorMessage(error, "Token invalide"));
     }
   }, [navigate]);
 

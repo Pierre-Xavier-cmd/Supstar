@@ -76,3 +76,5 @@ DELETE /avis/:lieuId
 ```
 
 Les rôles d'une liste sont `createur`, `editeur`, `commentateur` et `lecteur`.
+
+Le frontend permet d'exporter les lieux affichés en JSON ou CSV. La fiche d'un lieu affiche une carte OpenStreetMap lorsque ses coordonnées GPS sont renseignées.

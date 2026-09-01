@@ -48,7 +48,13 @@ Pour ajouter un nouveau lieu à une liste, l’utilisateur doit d’abord ouvrir
 
 Les coordonnées GPS d’un lieu correspondent à sa latitude et à sa longitude. Elles permettent de placer le lieu sur une carte comme OpenStreetMap.
 
+Quand les coordonnées GPS sont renseignées, une carte OpenStreetMap est affichée sur la fiche du lieu.
+
 Pour ajouter des photos, il faut saisir leurs liens dans le champ `Liens des photos`, en les séparant par des virgules.
+
+## **Exporter les lieux**
+
+Les boutons `Exporter JSON` et `Exporter CSV` téléchargent les lieux affichés dans la liste. Les filtres peuvent être utilisés avant l’export.
 
 ## **Partager une liste**
 

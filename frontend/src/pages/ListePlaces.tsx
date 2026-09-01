@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api, { getErrorMessage } from "../services/api";
 import {
   Alert,
   Box,
@@ -36,7 +36,7 @@ const ListePlaces = () => {
 
   const [chargement, setChargement] = useState(false);
 
-  const [erreur, setErreur] = useState<any>(false);
+  const [erreur, setErreur] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -51,9 +51,9 @@ const ListePlaces = () => {
       const res = await api.get("/lists", { params: { user_id } });
       setListes(res.data);
       setChargement(false);
-    } catch (error) {
+    } catch (error: unknown) {
       setChargement(false);
-      setErreur(error);
+      setErreur(getErrorMessage(error, "Erreur lors du chargement des listes"));
     }
   };
 
@@ -83,12 +83,8 @@ const ListePlaces = () => {
       setNomListe("");
       setErreur(null);
       getListes();
-    } catch (error: any) {
-      setErreur(
-        error.response?.data?.message ||
-          error.message ||
-          "Erreur création liste",
-      );
+    } catch (error: unknown) {
+      setErreur(getErrorMessage(error, "Erreur création liste"));
     }
   };
 

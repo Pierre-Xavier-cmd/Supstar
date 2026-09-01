@@ -15,4 +15,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+export function getErrorMessage(error: unknown, message: string) {
+  if (axios.isAxiosError<{ message?: string }>(error)) {
+    return error.response?.data?.message || error.message || message;
+  }
+
+  return error instanceof Error ? error.message : message;
+}
+
 export default api;

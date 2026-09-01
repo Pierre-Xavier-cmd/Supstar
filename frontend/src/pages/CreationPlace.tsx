@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../services/api";
+import api, { getErrorMessage } from "../services/api";
 import {
   Alert,
   Box,
@@ -22,26 +22,24 @@ type CreationPlaceProps = {
 };
 
 function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
-  const [form, setForm] = useState<any>({
+  const [form, setForm] = useState({
     nom: "",
     adresse: "",
     ville: "",
     pays: "",
-    tags: [],
+    tags: [] as string[],
     categorie: "",
     description: "",
     horaires: "",
     prix: 0,
     statut: "",
-    photos: [],
+    photos: [] as string[],
     noteGlobale: 0,
     coordonneesGps: {
       latitude: 0,
       longitude: 0,
     },
   });
-
-  //  const [erreur, setErreur] = useState(null);
 
   const [erreur, setErreur] = useState<string | null>(null);
 
@@ -54,12 +52,10 @@ function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
 
     try {
       setChargement(true);
-      //const res = await api.post("/places", { ...form, liste });
       const res = await api.post("/places", {
         ...form,
         ...(liste ? { liste } : {}),
       });
-      // const res = await api.post("/lieux", { ...form, liste });
 
       if (res.data.nom) {
         if (onCreated) {
@@ -69,13 +65,9 @@ function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
         }
       }
       setChargement(false);
-
-      //      alert("Place créée");
-      //      console.log(res.data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setChargement(false);
-      setErreur(error.response?.data?.message);
-      //      alert(error.response?.data?.message || "Erreur création place");
+      setErreur(getErrorMessage(error, "Erreur lors de la création du lieu"));
     }
   };
 
