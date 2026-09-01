@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: false,
+      select: false,
     },
 
     preferences: {
@@ -34,12 +35,6 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    toJSON: {
-      transform: (_doc, ret) => {
-        delete ret.motDePasse;
-        return ret;
-      },
-    },
   },
 );
 

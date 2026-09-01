@@ -65,7 +65,9 @@ router.post("/inscription", async (req, res) => {
 // connexion d'un utilisateur
 router.post("/connexion", async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: req.body.email }).select(
+      "+motDePasse",
+    );
 
     if (!user) {
       return res

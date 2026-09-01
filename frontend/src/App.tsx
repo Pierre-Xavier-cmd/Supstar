@@ -31,7 +31,7 @@ function App() {
     <BrowserRouter>
       <Header isConnected={isConnected} />
       <Routes>
-        <Route path="/" element={<Navigate to="/connexion" replace />} />
+        <Route path="/" element={<Navigate to="/connexion" />} />
         <Route
           path="/connexion"
           element={

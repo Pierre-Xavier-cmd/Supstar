@@ -4,11 +4,6 @@ services:
     restart: unless-stopped
     volumes:
       - mongo_data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
   backend:
     build: ./backend
@@ -20,8 +15,7 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      mongo:
-        condition: service_healthy
+      - mongo
 
   frontend:
     build: ./frontend
