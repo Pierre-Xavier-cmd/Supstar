@@ -32,11 +32,7 @@ docker compose down
 - `backend/routes` : routes de l'API
 - `backend/middleware/auth.js` : vérification du token
 
-Les données sont réparties dans quatre collections : utilisateurs, listes, lieux et avis.
-
 ## Routes API
-
-Toutes les routes commencent par `/api`.
 
 Utilisateurs :
 
@@ -77,12 +73,6 @@ Avis :
 GET  /avis/:lieuId
 POST /avis/:lieuId
 DELETE /avis/:lieuId
-```
-
-Les routes protégées reçoivent le token dans l'en-tête :
-
-```text
-Authorization: Bearer TOKEN
 ```
 
 Les rôles d'une liste sont `createur`, `editeur`, `commentateur` et `lecteur`.
