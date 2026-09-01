@@ -9,7 +9,6 @@ import {
   InputLabel,
   MenuItem,
   OutlinedInput,
-  Paper,
   Select,
   TextareaAutosize,
   TextField,
@@ -18,11 +17,11 @@ import {
 import { useNavigate, type Params } from "react-router-dom";
 import categorie from "../constantes/categorie.json";
 type CreationPlaceProps = {
-  //  liste: Readonly<string>;
   liste?: string;
+  onCreated?: () => void;
 };
 
-function CreationPlace({ liste }: CreationPlaceProps) {
+function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
   const [form, setForm] = useState<any>({
     nom: "",
     adresse: "",
@@ -66,6 +65,7 @@ function CreationPlace({ liste }: CreationPlaceProps) {
         navigate(`/liste-lieux/${liste}`);
       }
       setChargement(false);
+      onCreated?.();
 
       //      alert("Place créée");
       //      console.log(res.data);
@@ -233,13 +233,20 @@ function CreationPlace({ liste }: CreationPlaceProps) {
               }
             />
 
-            <TextField
+            <InputLabel id="demo-multiple-name-label">Statut</InputLabel>
+            <Select
               fullWidth
-              label="Statut"
-              margin="normal"
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
               value={form.statut}
+              label="statut"
+              input={<OutlinedInput label="Statut" />}
               onChange={(e) => setForm({ ...form, statut: e.target.value })}
-            />
+            >
+              <MenuItem value="a_visiter">A visiter</MenuItem>
+              <MenuItem value="visite">Visité</MenuItem>
+              <MenuItem value="favoris">Favoris</MenuItem>
+            </Select>
 
             <TextField
               fullWidth

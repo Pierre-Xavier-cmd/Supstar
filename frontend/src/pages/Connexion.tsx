@@ -124,17 +124,6 @@ function Connexion({ setIsConnected }: ConnexionProps) {
               Inscription
             </Link>
           </Typography>
-
-          <Typography variant="body2" sx={{ mt: 1, textAlign: "center" }}>
-            Mot de passe oublié ?
-            <Link
-              component={RouterLink}
-              to="/mot-de-passe-oublie"
-              underline="hover"
-            >
-              Réinitialiser le mot de passe
-            </Link>
-          </Typography>
         </Paper>
       </Box>
     </Container>
