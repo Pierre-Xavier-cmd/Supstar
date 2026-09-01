@@ -287,7 +287,7 @@ router.post("/:id/partager", verifyToken, async (req, res) => {
 }); */
 
 // partager une liste / ajouter un membre
-router.post("/:id/partager", verifyToken, async (req, res) => {
+/* router.post("/:id/partager", verifyToken, async (req, res) => {
   try {
     const userId = req.user.userId;
     const { email, role } = req.body;
@@ -334,6 +334,64 @@ router.post("/:id/partager", verifyToken, async (req, res) => {
     });
 
     await list.save();
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}); */
+
+// partager une liste / ajouter un membre
+router.post("/:id/partager", verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { email, role } = req.body;
+
+    const list = await List.findOne({
+      _id: req.params.id,
+      createur: userId,
+    });
+
+    if (!list) {
+      return res.status(403).json({
+        message: "Seul le créateur peut inviter des utilisateurs",
+      });
+    }
+
+    const roleFinal = role || "lecteur";
+
+    const rolesAutorises = ["lecteur", "commentateur", "editeur"];
+
+    if (!rolesAutorises.includes(roleFinal)) {
+      return res.status(400).json({
+        message: "Rôle invalide",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Utilisateur non trouvé",
+      });
+    }
+
+    const dejaMembre = list.membres.some(
+      (membre) => membre.user.toString() === user._id.toString(),
+    );
+
+    if (dejaMembre) {
+      return res.status(409).json({
+        message: "Utilisateur déjà dans la liste",
+      });
+    }
+
+    list.membres.push({
+      user: user._id,
+      role: roleFinal,
+    });
+
+    await list.save();
+
     res.json(list);
   } catch (error) {
     res.status(500).json({ message: error.message });

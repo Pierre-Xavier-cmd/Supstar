@@ -239,7 +239,6 @@ const Places = () => {
                       <MenuItem value="lecteur">Lecteur</MenuItem>
                       <MenuItem value="commentateur">Commentateur</MenuItem>
                       <MenuItem value="editeur">Editeur</MenuItem>
-                      <MenuItem value="createur">Créateur</MenuItem>
                     </Select>
                   </DialogContent>
                   <DialogActions>
