@@ -2,9 +2,18 @@ const express = require("express");
 const User = require("../models/User");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const verifyToken = require("../middleware/auth");
+
+function verifyOwner(req, res, next) {
+  if (req.user.userId !== req.params.id) {
+    return res.status(403).json({ message: "action non autorisée" });
+  }
+
+  next();
+}
 
 // get tous les utilisateurs
-router.get("/", async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -14,7 +23,7 @@ router.get("/", async (req, res) => {
 });
 
 // get un utilisateur par id
-router.get("/:id", async (req, res) => {
+router.get("/:id", verifyToken, verifyOwner, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -94,7 +103,7 @@ router.post("/connexion", async (req, res) => {
 });
 
 // supprimer un user par un id
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyToken, verifyOwner, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
@@ -107,9 +116,13 @@ router.delete("/:id", async (req, res) => {
 });
 
 // modifier un user par un id
-router.put("/:id", async (req, res) => {
+router.put("/:id", verifyToken, verifyOwner, async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    const modifications = { ...req.body };
+    delete modifications.motDePasse;
+    delete modifications._id;
+
+    const user = await User.findByIdAndUpdate(req.params.id, modifications, {
       new: true,
       runValidators: true,
     });
