@@ -359,9 +359,28 @@ function PlaceDetails() {
                     Photos
                   </Typography>
 
-                  <Typography variant="body1" color="text.secondary">
-                    {data.photos.length > 0 ? data.photos.join(", ") : "Aucune"}
-                  </Typography>
+                  {data.photos.length > 0 ? (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                      {data.photos.map((photo) => (
+                        <Box
+                          component="img"
+                          key={photo}
+                          src={photo}
+                          alt={`Photo de ${data.nom}`}
+                          sx={{
+                            width: 180,
+                            height: 120,
+                            objectFit: "cover",
+                            borderRadius: 2,
+                          }}
+                        />
+                      ))}
+                    </Box>
+                  ) : (
+                    <Typography variant="body1" color="text.secondary">
+                      Aucune photo
+                    </Typography>
+                  )}
                 </Box>
               </Stack>
             </CardContent>

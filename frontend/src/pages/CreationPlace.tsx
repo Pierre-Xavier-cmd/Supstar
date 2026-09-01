@@ -184,11 +184,9 @@ function CreationPlace({ liste, onCreated }: CreationPlaceProps) {
               }
             />
 
-            <input type="file" />
-
             <TextField
               fullWidth
-              label="Photos"
+              label="Liens des photos"
               margin="normal"
               placeholder="https://site.com/photo1.jpg, https://site.com/photo2.jpg"
               value={form.photos.join(", ")}
